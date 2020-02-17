@@ -39,16 +39,8 @@ namespace STL2_Act_1
                     break;
                 } else if (celda < 0) {
                     /***** REDUCCION *****/
-                    // checar regla 
-                    // numEle = checar numero de elementos del lado derecho de la regla
-                    // popear de pila doble de numEle a derecha regla
-                    // GOTO de los dos elemtos mas arriba de la pila
-                    // EL numero de GOTO lo usamos con el current Token
-                    // Repetimos ciclo
                 } else if (celda == 0) {
                     /***** DEZPLAZAR *****/
-                    // popear pila
-                    // Actualizar el current token
                 } else if (celda == -1) {
                 }
             }
