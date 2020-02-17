@@ -14,11 +14,6 @@ namespace STL2_Act_1
       InitializeComponent();
     }
 
-    private void buttonCopiarTexto_Click(object sender, EventArgs e)
-    {
-      CopiarTexto(txtBoxOrg.Text);
-    }
-
     private void buttonAnalizadorLexico_Click(object sender, EventArgs e)
     {
       lexico = new Lexico();
@@ -40,20 +35,6 @@ namespace STL2_Act_1
       } else {
         MessageBox.Show("Sintaxis Incorrecta.");
       }
-    }
-
-    private void CopiarTexto(string texto)
-    {
-      string copia = ""; // split
-      foreach (char c in texto) {
-        if (c == ' ' || c == '\n' || c == '\t' || c == '\r') {
-          txtBoxCopy.AppendText(copia + Environment.NewLine);
-          copia = "";
-        } else {
-          copia += c;
-        }
-      }
-      txtBoxCopy.AppendText(copia + Environment.NewLine);
     }
   }
 }

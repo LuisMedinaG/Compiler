@@ -16,6 +16,8 @@ namespace STL2_Act_1
     static readonly string tableFile = @"C:\Users\Fabiola\Documents\GR2slrTable.txt";
     static readonly string rulesFile = @"C:\Users\Fabiola\Documents\GR2slrRulesId.txt";
 
+    List<string> rulesDetails;
+    string ruleDetail;
 
     public Sintactico(Lexico lexico)
     {
@@ -23,6 +25,8 @@ namespace STL2_Act_1
       Pila = new Stack<int>();
       Tabla = new List<string[]>();
       Reglas = new List<Tuple<int, int>>();
+      rulesDetails = new List<string>();
+      ruleDetail = "";
     }
 
     public bool Analizar(string text)
@@ -37,6 +41,7 @@ namespace STL2_Act_1
       Pila.Push(0);
       while (Pila.Count > 0) {
         PRINT_PILA();
+        ruleDetail = "";
         TokenActual = lexico.Tokens.Peek();
         TopePila = Pila.Peek();
         accion = ACCION(TopePila, TokenActual.Tipo);
@@ -53,7 +58,8 @@ namespace STL2_Act_1
           /***** REDUCCION *****/
           int idxRegla = Math.Abs(accion) - 1;
           var regla = Reglas[idxRegla];
-          int numPops = regla.Item2*2;
+          ruleDetail = rulesDetails[idxRegla];
+          int numPops = regla.Item2 * 2;
           for (int i = 0; i < numPops; i++) {
             if (Pila.Count == 0) {
               return false;
@@ -83,7 +89,7 @@ namespace STL2_Act_1
       foreach (int p in Pila) {
         pila = p.ToString() + ", " + pila;
       }
-      tablePila.Rows.Add(tablePila.Rows.Count + 1, pila, cadenaActual);
+      tablePila.Rows.Add(tablePila.Rows.Count + 1, pila, cadenaActual, ruleDetail);
     }
 
     private string GET_CADENA()
@@ -101,8 +107,11 @@ namespace STL2_Act_1
         string[] lines = File.ReadAllLines(rulesFile);
 
         foreach (string line in lines) {
-          string[] pair = line.Split(null);
-          Reglas.Add(new Tuple<int, int>(int.Parse(pair[0]), int.Parse(pair[1])));
+          string[] regla = line.Split(null);
+          var arr = new ArraySegment<string>(regla, 2, regla.Length - 2);
+          string reglaStr = string.Concat(arr);
+          rulesDetails.Add(reglaStr);
+          Reglas.Add(new Tuple<int, int>(int.Parse(regla[0]), int.Parse(regla[1])));
         }
       }
     }

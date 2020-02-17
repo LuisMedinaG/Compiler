@@ -113,6 +113,7 @@ namespace STL2_Act_1
         case "int":
         case "char":
         case "bool":
+        case "string":
         case "float": return 0;
         case "if": return 9;
         case "while": return 10;

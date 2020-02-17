@@ -29,9 +29,7 @@
         private void InitializeComponent()
         {
       this.components = new System.ComponentModel.Container();
-      this.buttonCopiar = new System.Windows.Forms.Button();
       this.txtBoxOrg = new System.Windows.Forms.TextBox();
-      this.txtBoxCopy = new System.Windows.Forms.TextBox();
       this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
       this.buttonAnalizar = new System.Windows.Forms.Button();
       this.numWord = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -42,20 +40,11 @@
       this.Paso = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Pila = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.cadenaentrada = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.Regla = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewWords)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.tablePila)).BeginInit();
       this.SuspendLayout();
-      // 
-      // buttonCopiar
-      // 
-      this.buttonCopiar.Location = new System.Drawing.Point(12, 259);
-      this.buttonCopiar.Name = "buttonCopiar";
-      this.buttonCopiar.Size = new System.Drawing.Size(147, 49);
-      this.buttonCopiar.TabIndex = 13;
-      this.buttonCopiar.Text = "Copiar";
-      this.buttonCopiar.UseVisualStyleBackColor = true;
-      this.buttonCopiar.Click += new System.EventHandler(this.buttonCopiarTexto_Click);
       // 
       // txtBoxOrg
       // 
@@ -63,23 +52,14 @@
       this.txtBoxOrg.Location = new System.Drawing.Point(12, 12);
       this.txtBoxOrg.Multiline = true;
       this.txtBoxOrg.Name = "txtBoxOrg";
-      this.txtBoxOrg.Size = new System.Drawing.Size(221, 241);
+      this.txtBoxOrg.Size = new System.Drawing.Size(274, 241);
       this.txtBoxOrg.TabIndex = 7;
-      // 
-      // txtBoxCopy
-      // 
-      this.txtBoxCopy.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.txtBoxCopy.Location = new System.Drawing.Point(244, 12);
-      this.txtBoxCopy.Multiline = true;
-      this.txtBoxCopy.Name = "txtBoxCopy";
-      this.txtBoxCopy.Size = new System.Drawing.Size(221, 241);
-      this.txtBoxCopy.TabIndex = 8;
       // 
       // buttonAnalizar
       // 
-      this.buttonAnalizar.Location = new System.Drawing.Point(165, 259);
+      this.buttonAnalizar.Location = new System.Drawing.Point(12, 259);
       this.buttonAnalizar.Name = "buttonAnalizar";
-      this.buttonAnalizar.Size = new System.Drawing.Size(147, 49);
+      this.buttonAnalizar.Size = new System.Drawing.Size(134, 49);
       this.buttonAnalizar.TabIndex = 14;
       this.buttonAnalizar.Text = "Lexico";
       this.buttonAnalizar.UseVisualStyleBackColor = true;
@@ -109,14 +89,14 @@
       this.dataGridViewWords.Location = new System.Drawing.Point(12, 314);
       this.dataGridViewWords.Name = "dataGridViewWords";
       this.dataGridViewWords.ReadOnly = true;
-      this.dataGridViewWords.Size = new System.Drawing.Size(453, 204);
+      this.dataGridViewWords.Size = new System.Drawing.Size(274, 204);
       this.dataGridViewWords.TabIndex = 6;
       // 
       // button1
       // 
-      this.button1.Location = new System.Drawing.Point(318, 259);
+      this.button1.Location = new System.Drawing.Point(152, 259);
       this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(147, 49);
+      this.button1.Size = new System.Drawing.Size(134, 49);
       this.button1.TabIndex = 15;
       this.button1.Text = "Sintactico";
       this.button1.UseVisualStyleBackColor = true;
@@ -130,15 +110,16 @@
       this.tablePila.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Paso,
             this.Pila,
-            this.cadenaentrada});
-      this.tablePila.Location = new System.Drawing.Point(471, 12);
+            this.cadenaentrada,
+            this.Regla});
+      this.tablePila.Location = new System.Drawing.Point(292, 12);
       this.tablePila.Name = "tablePila";
       this.tablePila.ReadOnly = true;
       this.tablePila.ShowCellErrors = false;
       this.tablePila.ShowCellToolTips = false;
       this.tablePila.ShowEditingIcon = false;
       this.tablePila.ShowRowErrors = false;
-      this.tablePila.Size = new System.Drawing.Size(355, 506);
+      this.tablePila.Size = new System.Drawing.Size(434, 506);
       this.tablePila.TabIndex = 16;
       // 
       // Paso
@@ -153,11 +134,9 @@
       // 
       // Pila
       // 
-      this.Pila.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
       this.Pila.HeaderText = "Pila";
       this.Pila.Name = "Pila";
       this.Pila.ReadOnly = true;
-      this.Pila.Width = 49;
       // 
       // cadenaentrada
       // 
@@ -167,16 +146,22 @@
       this.cadenaentrada.ReadOnly = true;
       this.cadenaentrada.Width = 105;
       // 
+      // Regla
+      // 
+      this.Regla.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+      this.Regla.HeaderText = "Regla";
+      this.Regla.Name = "Regla";
+      this.Regla.ReadOnly = true;
+      this.Regla.Width = 60;
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(838, 530);
+      this.ClientSize = new System.Drawing.Size(738, 530);
       this.Controls.Add(this.tablePila);
       this.Controls.Add(this.button1);
       this.Controls.Add(this.buttonAnalizar);
-      this.Controls.Add(this.buttonCopiar);
-      this.Controls.Add(this.txtBoxCopy);
       this.Controls.Add(this.txtBoxOrg);
       this.Controls.Add(this.dataGridViewWords);
       this.Name = "MainForm";
@@ -191,9 +176,7 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button buttonCopiar;
         private System.Windows.Forms.TextBox txtBoxOrg;
-        private System.Windows.Forms.TextBox txtBoxCopy;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Button buttonAnalizar;
         private System.Windows.Forms.DataGridViewTextBoxColumn numWord;
@@ -204,6 +187,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Paso;
         private System.Windows.Forms.DataGridViewTextBoxColumn Pila;
         private System.Windows.Forms.DataGridViewTextBoxColumn cadenaentrada;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Regla;
     }
 }
 
