@@ -25,7 +25,6 @@ namespace STL2_Act_1
       lexico = new Lexico();
       lexico.Analizar(txtBoxOrg.Text);
 
-      /* Agregar tokens a tabla */
       dataGridViewWords.Rows.Clear();
       foreach (Token t in lexico.Tokens) {
         dataGridViewWords.Rows.Add(t.Dato, t.Tipo);
@@ -42,7 +41,7 @@ namespace STL2_Act_1
     {
       string copia = ""; // split
       foreach (char c in texto) {
-        if (c == ' ' || c == '\n' || c == '\t') {
+        if (c == ' ' || c == '\n' || c == '\t' || c == '\r') {
           txtBoxCopy.AppendText(copia + Environment.NewLine);
           copia = "";
         } else {

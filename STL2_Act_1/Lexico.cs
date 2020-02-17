@@ -32,17 +32,15 @@ namespace STL2_Act_1
       int idx = 0;
       int estado;
       string token;
-      // TODO : Agregar simbolo $ al final de la cadena
       while (idx < cadena.Length) {
         t = new Token();
         token = "";
         estado = 0;
-
         while (estado != 20) {
           if (estado == 0) {
-            if (esLetra(cadena[idx]) || cadena[idx] == '_') {
+            if (esLetra(cadena[idx])) {
               estado = 1;
-            } else if (esEspacio(cadena[idx]) || cadena[idx] == '\n') {
+            } else if (esEspacio(cadena[idx])) {
               idx++;
             } else if (esCaracter(cadena[idx])) {
               estado = AsignarEstado(cadena, idx);
@@ -59,62 +57,60 @@ namespace STL2_Act_1
             }
           } else if (estado == 1) {
             if (esLetra(cadena[idx]) || cadena[idx] == '_' || esNumero(cadena[idx])) {
-              token += cadena[idx];
-              idx++;
+              token += cadena[idx++];
             } else {
               t.Tipo = QuePalabraReservadaEs(token, estado);
               estado = 20;
             }
           } else if ((estado >= 2 && estado <= 7) || (estado >= 9 && estado <= 12) ||
                       estado == 14 || estado == 16 || estado == 18) {
-            token += cadena[idx];
-            idx++;
+            token += cadena[idx++];
             t.Tipo = estado;
             estado = 20;
           } else if (estado == 8) {
-            if (cadena[idx] == '=') {
-              token += cadena[idx];
-              idx++;
-              estado = 17;
+            if (cadena[idx] == cadena[idx + 1]) {
+              token += cadena[idx++];
+              t.Tipo = 17;
             } else {
-              t.Tipo = estado;
-              estado = 20;
+              t.Tipo = 8;
             }
+            token += cadena[idx++];
+            estado = 20;
           } else if (estado == 13) {
             if (esNumero(cadena[idx])) {
-              token += cadena[idx];
-              idx++;
+              token += cadena[idx++];
             } else {
               t.Tipo = estado;
               estado = 20;
             }
           } else if (estado == 15) {
-            if (esOperLogi(cadena[idx])) {
+            if (cadena[idx] == cadena[idx + 1]) {
               token += cadena[idx];
-              idx++;
-            } else {
+              token += cadena[idx];
               t.Tipo = estado;
+              idx += 2;
+            } else {
+              t.Tipo = 20;
               estado = 20;
             }
           } else if (estado == 17) {
-            if (esOperRela(cadena[idx])) {
-              token += cadena[idx];
-              idx++;
-            } else {
-              t.Tipo = 8;
-              estado = 20;
+            if (cadena[idx + 1] == '=') {
+              token += cadena[idx++];
             }
+            token += cadena[idx++];
+            t.Tipo = estado;
+            estado = 20;
           }
         }
         t.Dato = token;
         Tokens.Push(t);
       }
+      Tokens.Push(new Token("$", 18));
     }
 
     private int QuePalabraReservadaEs(string token, int edo)
     {
       switch (token.ToLower()) {
-        case "=": return 8;
         case "if": return 9;
         case "while": return 10;
         case "return": return 11;
@@ -133,7 +129,7 @@ namespace STL2_Act_1
         case '{': return 6;
         case '}': return 7;
         case '=': return 8;
-        case '$': return 18;
+        default: break;
       }
       return 20;
     }
@@ -145,7 +141,7 @@ namespace STL2_Act_1
     }
     private bool esLetra(char c)
     {
-      return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z';
+      return c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '_';
     }
     private bool esNumero(char c)
     {
@@ -170,7 +166,7 @@ namespace STL2_Act_1
     private bool esCaracter(char c)
     {
       return c == ';' || c == ',' || c == '=' || c == '(' ||
-              c == ')' || c == '{' || c == '}' || c == '$';
+              c == ')' || c == '{' || c == '}';
     }
   }
 }
