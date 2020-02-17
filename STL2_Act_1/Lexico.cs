@@ -5,15 +5,15 @@ namespace STL2_Act_1
   class Token
   {
     public string Dato { get; set; }
-    public int Estado { get; set; }
+    public int Tipo { get; set; }
 
     public Token()
     {
-      Dato = ""; Estado = 0;
+      Dato = ""; Tipo = 0;
     }
     public Token(string Dato, int Tipo)
     {
-      this.Dato = Dato; this.Estado = Tipo;
+      this.Dato = Dato; this.Tipo = Tipo;
     }
   }
 
@@ -59,20 +59,20 @@ namespace STL2_Act_1
             if (esLetra(cadena[idx]) || esNumero(cadena[idx])) {
               token += cadena[idx++];
             } else {
-              t.Estado = QuePalabraReservadaEs(token, estado);
+              t.Tipo = QuePalabraReservadaEs(token, estado);
               estado = 20;
             }
           } else if ((estado >= 2 && estado <= 7) || (estado >= 9 && estado <= 12) ||
                       estado == 14 || estado == 16 || estado == 18) {
             token += cadena[idx++];
-            t.Estado = estado;
+            t.Tipo = estado;
             estado = 20;
           } else if (estado == 8) {
             if (idx + 1 < cadena.Length && cadena[idx] == cadena[idx + 1]) {
               token += cadena[idx++];
-              t.Estado = 17;
+              t.Tipo = 17;
             } else {
-              t.Estado = 8;
+              t.Tipo = 8;
             }
             token += cadena[idx++];
             estado = 20;
@@ -80,15 +80,15 @@ namespace STL2_Act_1
             if (esNumero(cadena[idx])) {
               token += cadena[idx++];
             } else {
-              t.Estado = estado;
+              t.Tipo = estado;
               estado = 20;
             }
           } else if (estado == 15) {
             if (idx + 1 < cadena.Length && cadena[idx] == cadena[idx + 1]) {
               token += cadena[idx++];
-              t.Estado = estado;
+              t.Tipo = estado;
             } else {
-              t.Estado = 20;
+              t.Tipo = 20;
             }
             token += cadena[idx++];
             estado = 20;
@@ -97,7 +97,7 @@ namespace STL2_Act_1
               token += cadena[idx++];
             }
             token += cadena[idx++];
-            t.Estado = estado;
+            t.Tipo = estado;
             estado = 20;
           }
         }

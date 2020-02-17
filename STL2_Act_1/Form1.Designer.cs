@@ -134,16 +134,21 @@
       this.tablePila.Location = new System.Drawing.Point(471, 12);
       this.tablePila.Name = "tablePila";
       this.tablePila.ReadOnly = true;
+      this.tablePila.ShowCellErrors = false;
+      this.tablePila.ShowCellToolTips = false;
+      this.tablePila.ShowEditingIcon = false;
+      this.tablePila.ShowRowErrors = false;
       this.tablePila.Size = new System.Drawing.Size(355, 506);
       this.tablePila.TabIndex = 16;
       // 
       // Paso
       // 
-      this.Paso.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+      this.Paso.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
       this.Paso.HeaderText = "Paso";
       this.Paso.MaxInputLength = 5;
       this.Paso.Name = "Paso";
       this.Paso.ReadOnly = true;
+      this.Paso.Resizable = System.Windows.Forms.DataGridViewTriState.False;
       this.Paso.Width = 56;
       // 
       // Pila
@@ -175,7 +180,8 @@
       this.Controls.Add(this.txtBoxOrg);
       this.Controls.Add(this.dataGridViewWords);
       this.Name = "MainForm";
-      this.Text = "Form1";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+      this.Text = "Analizador";
       ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewWords)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.tablePila)).EndInit();

@@ -26,7 +26,7 @@ namespace STL2_Act_1
 
       dataGridViewWords.Rows.Clear();
       foreach (Token t in lexico.Tokens) {
-        dataGridViewWords.Rows.Add(t.Dato, t.Estado);
+        dataGridViewWords.Rows.Add(t.Dato, t.Tipo);
       }
     }
 
