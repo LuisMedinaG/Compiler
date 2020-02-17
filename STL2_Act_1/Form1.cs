@@ -14,7 +14,6 @@ namespace STL2_Act_1
       InitializeComponent();
     }
 
-
     private void buttonCopiarTexto_Click(object sender, EventArgs e)
     {
       CopiarTexto(txtBoxOrg.Text);
@@ -27,14 +26,20 @@ namespace STL2_Act_1
 
       dataGridViewWords.Rows.Clear();
       foreach (Token t in lexico.Tokens) {
-        dataGridViewWords.Rows.Add(t.Dato, t.Tipo);
+        dataGridViewWords.Rows.Add(t.Dato, t.Estado);
       }
     }
 
     private void buttonAnalizadorSintactico_Click(object sender, EventArgs e)
     {
       sintactico = new Sintactico(lexico);
-      sintactico.Analizar(txtBoxOrg.Text);
+      sintactico.tablePila = tablePila;
+      tablePila.Rows.Clear();
+      if (sintactico.Analizar(txtBoxOrg.Text)) {
+        MessageBox.Show("¡Sintaxis correcta!");
+      } else {
+        MessageBox.Show("Sintaxis Incorrecta.");
+      }
     }
 
     private void CopiarTexto(string texto)

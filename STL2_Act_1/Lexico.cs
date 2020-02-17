@@ -5,25 +5,25 @@ namespace STL2_Act_1
   class Token
   {
     public string Dato { get; set; }
-    public int Tipo { get; set; }
+    public int Estado { get; set; }
 
     public Token()
     {
-      Dato = ""; Tipo = 0;
+      Dato = ""; Estado = 0;
     }
     public Token(string Dato, int Tipo)
     {
-      this.Dato = Dato; this.Tipo = Tipo;
+      this.Dato = Dato; this.Estado = Tipo;
     }
   }
 
   class Lexico
   {
-    public Stack<Token> Tokens { get; set; }
+    public Queue<Token> Tokens { get; set; }
 
     public Lexico()
     {
-      Tokens = new Stack<Token>();
+      Tokens = new Queue<Token>();
     }
 
     public void Analizar(string cadena)
@@ -59,20 +59,20 @@ namespace STL2_Act_1
             if (esLetra(cadena[idx]) || esNumero(cadena[idx])) {
               token += cadena[idx++];
             } else {
-              t.Tipo = QuePalabraReservadaEs(token, estado);
+              t.Estado = QuePalabraReservadaEs(token, estado);
               estado = 20;
             }
           } else if ((estado >= 2 && estado <= 7) || (estado >= 9 && estado <= 12) ||
                       estado == 14 || estado == 16 || estado == 18) {
             token += cadena[idx++];
-            t.Tipo = estado;
+            t.Estado = estado;
             estado = 20;
           } else if (estado == 8) {
             if (idx + 1 < cadena.Length && cadena[idx] == cadena[idx + 1]) {
               token += cadena[idx++];
-              t.Tipo = 17;
+              t.Estado = 17;
             } else {
-              t.Tipo = 8;
+              t.Estado = 8;
             }
             token += cadena[idx++];
             estado = 20;
@@ -80,15 +80,15 @@ namespace STL2_Act_1
             if (esNumero(cadena[idx])) {
               token += cadena[idx++];
             } else {
-              t.Tipo = estado;
+              t.Estado = estado;
               estado = 20;
             }
           } else if (estado == 15) {
             if (idx + 1 < cadena.Length && cadena[idx] == cadena[idx + 1]) {
               token += cadena[idx++];
-              t.Tipo = estado;
+              t.Estado = estado;
             } else {
-              t.Tipo = 20;
+              t.Estado = 20;
             }
             token += cadena[idx++];
             estado = 20;
@@ -97,14 +97,14 @@ namespace STL2_Act_1
               token += cadena[idx++];
             }
             token += cadena[idx++];
-            t.Tipo = estado;
+            t.Estado = estado;
             estado = 20;
           }
         }
         t.Dato = token;
-        Tokens.Push(t);
+        Tokens.Enqueue(t);
       }
-      Tokens.Push(new Token("$", 18));
+      Tokens.Enqueue(new Token("$", 18));
     }
 
     private int QuePalabraReservadaEs(string token, int edo)
