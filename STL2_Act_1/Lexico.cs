@@ -36,7 +36,7 @@ namespace STL2_Act_1
         t = new Token();
         token = "";
         estado = 0;
-        while (estado != 20) {
+        while (estado != 20 && idx < cadena.Length) {
           if (estado == 0) {
             if (esLetra(cadena[idx])) {
               estado = 1;
@@ -56,7 +56,7 @@ namespace STL2_Act_1
               estado = 17;
             }
           } else if (estado == 1) {
-            if (esLetra(cadena[idx]) || cadena[idx] == '_' || esNumero(cadena[idx])) {
+            if (esLetra(cadena[idx]) || esNumero(cadena[idx])) {
               token += cadena[idx++];
             } else {
               t.Tipo = QuePalabraReservadaEs(token, estado);
@@ -68,7 +68,7 @@ namespace STL2_Act_1
             t.Tipo = estado;
             estado = 20;
           } else if (estado == 8) {
-            if (cadena[idx] == cadena[idx + 1]) {
+            if (idx + 1 < cadena.Length && cadena[idx] == cadena[idx + 1]) {
               token += cadena[idx++];
               t.Tipo = 17;
             } else {
@@ -84,15 +84,14 @@ namespace STL2_Act_1
               estado = 20;
             }
           } else if (estado == 15) {
-            if (cadena[idx] == cadena[idx + 1]) {
-              token += cadena[idx];
-              token += cadena[idx];
+            if (idx + 1 < cadena.Length && cadena[idx] == cadena[idx + 1]) {
+              token += cadena[idx++];
               t.Tipo = estado;
-              idx += 2;
             } else {
               t.Tipo = 20;
-              estado = 20;
             }
+            token += cadena[idx++];
+            estado = 20;
           } else if (estado == 17) {
             if (cadena[idx + 1] == '=') {
               token += cadena[idx++];
@@ -111,6 +110,10 @@ namespace STL2_Act_1
     private int QuePalabraReservadaEs(string token, int edo)
     {
       switch (token.ToLower()) {
+        case "int":
+        case "char":
+        case "bool":
+        case "float": return 0;
         case "if": return 9;
         case "while": return 10;
         case "return": return 11;
@@ -153,7 +156,7 @@ namespace STL2_Act_1
     }
     private bool esOperRela(char c)
     {
-      return c == '<' || c == '>' || c == '=';
+      return c == '<' || c == '>';
     }
     private bool esOperMult(char c)
     {
