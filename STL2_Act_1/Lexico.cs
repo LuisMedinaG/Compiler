@@ -157,7 +157,7 @@ namespace STL2_Act_1
     }
     private bool esOperRela(char c)
     {
-      return c == '<' || c == '>';
+      return c == '<' || c == '>' || c == '!';
     }
     private bool esOperMult(char c)
     {

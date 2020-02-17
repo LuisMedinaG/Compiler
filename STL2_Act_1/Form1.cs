@@ -23,6 +23,7 @@ namespace STL2_Act_1
       foreach (Token t in lexico.Tokens) {
         dataGridViewWords.Rows.Add(t.Dato, t.Tipo);
       }
+      bttnSintactico.Enabled = true;
     }
 
     private void buttonAnalizadorSintactico_Click(object sender, EventArgs e)
@@ -35,6 +36,7 @@ namespace STL2_Act_1
       } else {
         MessageBox.Show("Sintaxis Incorrecta.");
       }
+      bttnSintactico.Enabled = false;
     }
   }
 }

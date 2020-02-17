@@ -31,11 +31,11 @@
       this.components = new System.ComponentModel.Container();
       this.txtBoxOrg = new System.Windows.Forms.TextBox();
       this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-      this.buttonAnalizar = new System.Windows.Forms.Button();
+      this.bttnLexico = new System.Windows.Forms.Button();
       this.numWord = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.word = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.dataGridViewWords = new System.Windows.Forms.DataGridView();
-      this.button1 = new System.Windows.Forms.Button();
+      this.bttnSintactico = new System.Windows.Forms.Button();
       this.tablePila = new System.Windows.Forms.DataGridView();
       this.Paso = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Pila = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -55,15 +55,15 @@
       this.txtBoxOrg.Size = new System.Drawing.Size(274, 241);
       this.txtBoxOrg.TabIndex = 7;
       // 
-      // buttonAnalizar
+      // bttnLexico
       // 
-      this.buttonAnalizar.Location = new System.Drawing.Point(12, 259);
-      this.buttonAnalizar.Name = "buttonAnalizar";
-      this.buttonAnalizar.Size = new System.Drawing.Size(134, 49);
-      this.buttonAnalizar.TabIndex = 14;
-      this.buttonAnalizar.Text = "Lexico";
-      this.buttonAnalizar.UseVisualStyleBackColor = true;
-      this.buttonAnalizar.Click += new System.EventHandler(this.buttonAnalizadorLexico_Click);
+      this.bttnLexico.Location = new System.Drawing.Point(12, 259);
+      this.bttnLexico.Name = "bttnLexico";
+      this.bttnLexico.Size = new System.Drawing.Size(134, 49);
+      this.bttnLexico.TabIndex = 14;
+      this.bttnLexico.Text = "Lexico";
+      this.bttnLexico.UseVisualStyleBackColor = true;
+      this.bttnLexico.Click += new System.EventHandler(this.buttonAnalizadorLexico_Click);
       // 
       // numWord
       // 
@@ -92,15 +92,16 @@
       this.dataGridViewWords.Size = new System.Drawing.Size(274, 204);
       this.dataGridViewWords.TabIndex = 6;
       // 
-      // button1
+      // bttnSintactico
       // 
-      this.button1.Location = new System.Drawing.Point(152, 259);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(134, 49);
-      this.button1.TabIndex = 15;
-      this.button1.Text = "Sintactico";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.buttonAnalizadorSintactico_Click);
+      this.bttnSintactico.Enabled = false;
+      this.bttnSintactico.Location = new System.Drawing.Point(152, 259);
+      this.bttnSintactico.Name = "bttnSintactico";
+      this.bttnSintactico.Size = new System.Drawing.Size(134, 49);
+      this.bttnSintactico.TabIndex = 15;
+      this.bttnSintactico.Text = "Sintactico";
+      this.bttnSintactico.UseVisualStyleBackColor = true;
+      this.bttnSintactico.Click += new System.EventHandler(this.buttonAnalizadorSintactico_Click);
       // 
       // tablePila
       // 
@@ -119,7 +120,7 @@
       this.tablePila.ShowCellToolTips = false;
       this.tablePila.ShowEditingIcon = false;
       this.tablePila.ShowRowErrors = false;
-      this.tablePila.Size = new System.Drawing.Size(434, 506);
+      this.tablePila.Size = new System.Drawing.Size(565, 506);
       this.tablePila.TabIndex = 16;
       // 
       // Paso
@@ -158,10 +159,10 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(738, 530);
+      this.ClientSize = new System.Drawing.Size(869, 530);
       this.Controls.Add(this.tablePila);
-      this.Controls.Add(this.button1);
-      this.Controls.Add(this.buttonAnalizar);
+      this.Controls.Add(this.bttnSintactico);
+      this.Controls.Add(this.bttnLexico);
       this.Controls.Add(this.txtBoxOrg);
       this.Controls.Add(this.dataGridViewWords);
       this.Name = "MainForm";
@@ -178,11 +179,11 @@
         #endregion
         private System.Windows.Forms.TextBox txtBoxOrg;
         private System.Windows.Forms.BindingSource bindingSource1;
-        private System.Windows.Forms.Button buttonAnalizar;
+        private System.Windows.Forms.Button bttnLexico;
         private System.Windows.Forms.DataGridViewTextBoxColumn numWord;
         private System.Windows.Forms.DataGridViewTextBoxColumn word;
         private System.Windows.Forms.DataGridView dataGridViewWords;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button bttnSintactico;
         private System.Windows.Forms.DataGridView tablePila;
         private System.Windows.Forms.DataGridViewTextBoxColumn Paso;
         private System.Windows.Forms.DataGridViewTextBoxColumn Pila;
