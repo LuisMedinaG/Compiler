@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace STL2_Act_1
@@ -14,24 +13,25 @@ namespace STL2_Act_1
       InitializeComponent();
     }
 
-    private void buttonAnalizadorLexico_Click(object sender, EventArgs e)
+    private void ButtonAnalizadorLexico_Click(object sender, EventArgs e)
     {
       lexico = new Lexico();
-      lexico.Analizar(txtBoxOrg.Text);
+      lexico.Analizar(txtBoxCadena.Text);
 
-      dataGridViewWords.Rows.Clear();
+      tableLexico.Rows.Clear();
       foreach (Token t in lexico.Tokens) {
-        dataGridViewWords.Rows.Add(t.Dato, t.Tipo);
+        tableLexico.Rows.Add(t.Dato, t.Tipo);
       }
       bttnSintactico.Enabled = true;
     }
 
-    private void buttonAnalizadorSintactico_Click(object sender, EventArgs e)
+    private void ButtonAnalizadorSintactico_Click(object sender, EventArgs e)
     {
-      sintactico = new Sintactico(lexico);
-      sintactico.tablePila = tablePila;
+      sintactico = new Sintactico(lexico) {
+        tablePila = tablePila
+      };
       tablePila.Rows.Clear();
-      if (sintactico.Analizar(txtBoxOrg.Text)) {
+      if (sintactico.Analizar()) {
         MessageBox.Show("¡Sintaxis correcta!");
       } else {
         MessageBox.Show("Sintaxis Incorrecta.");
