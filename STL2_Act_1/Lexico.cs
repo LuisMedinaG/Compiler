@@ -110,6 +110,11 @@ namespace STL2_Act_1
       Tokens.Enqueue(new Token("$", 18));
     }
 
+    public Token NextToken()
+    {
+      return Tokens.Dequeue();
+    }
+
     /* * * * PRIVATE FUNCTIONS * * * */
     private int QuePalabraReservadaEs(string token, int edo)
     {

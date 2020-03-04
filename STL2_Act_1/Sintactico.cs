@@ -14,7 +14,7 @@ namespace STL2_Act_1
 
     static readonly string tableFile = @"C:\Users\Fabiola\Documents\GR2slrTable.txt";
     static readonly string rulesFile = @"C:\Users\Fabiola\Documents\GR2slrRulesId.txt";
-    
+
     internal DataGridView tablePila;
     List<string> DetallesReglas;
     string DetalleRegla;
@@ -26,7 +26,11 @@ namespace STL2_Act_1
       Tabla = new List<string[]>();
       Reglas = new List<Tuple<int, int>>();
       DetallesReglas = new List<string>();
-      DetalleRegla = "";
+      
+      Pila.Push(0);
+
+      ConstruirTabla();
+      ConstruirReglas();
     }
 
     /*
@@ -36,61 +40,53 @@ namespace STL2_Act_1
 
     public bool Analizar()
     {
-      ConstruirTabla();
-      ConstruirReglas();
-
       Token token;
 
-      Pila.Push(0);
+      token = lexico.NextToken();
       while (Pila.Count > 0) {
-        // Print the current state of the stack
         PRINT_PILA();
-        // Get the next token in the list without removinig it from the queue        
-        token = lexico.Tokens.Peek();
-        int transicion = Pila.Peek();
-        // Get the correspondent action from the table
-        int accion = ACCION(transicion, token.Tipo);
-        if (accion == -1) {
-          /***** ACEPTAR *****/
+        
+        int transition = Pila.Peek();
+        int action = ACTION(transition, token.Tipo);
+        
+        if (action == -1) {
+          /***** ACCEPT *****/
           return true;
-        } else if (accion == 0) {
-          /***** RECHAZAR *****/
+        } else if (action == 0) {
+          /***** ERROR *****/
           return false;
-        } else if (accion > 0) {
-          /*** DEZPLAZAMIENTO ***/
-          lexico.Tokens.Dequeue();
+        } else if (action > 0) {
+          /***** SHIFT *****/
           Pila.Push(token.Tipo);
-          Pila.Push(accion);
-        } else if (accion < 0) {
-          /***** REDUCCION *****/
-          int idxRegla = Math.Abs(accion) - 1;
+          Pila.Push(action);
+          token = lexico.NextToken();
+        } else if (action < 0) {
+          /***** REDUCTION *****/
+          int idxRegla = Math.Abs(action) - 1;
           var regla = Reglas[idxRegla];
-          // ------ ARBOL SINTACTICO ------ //
-          Nodo nodo = new Nodo();
-          // ------------------------------ //
-          int numPops = regla.Item2 * 2;
+          int pops = regla.Item2 * 2;
           // Definimos el texto de la regla
           DetalleRegla = DetallesReglas[idxRegla];
-          
+
           // switch de pops
-          for (int i = 0; i < numPops; i++) {
+          // TODO : defirnir el numero de pops dependiendo de la reduccion
+          for (int i = 0; i < pops; i++) {
             if (Pila.Count == 0) {
               return false;
             }
             Pila.Pop();
           }
 
-          int GOTO_ROW = Pila.Peek();
-          int GOTO_COL = regla.Item1;
-          int GOTO_CELL = ACCION(GOTO_ROW, GOTO_COL);
-          Pila.Push(GOTO_COL);
-          Pila.Push(GOTO_CELL);
+          int row = Pila.Peek();
+          int col = regla.Item1;
+          Pila.Push(col);
+          Pila.Push(ACTION(row, col));
         }
       }
       return false;
     }
 
-    private int ACCION(int transicion, int simbolo)
+    private int ACTION(int transicion, int simbolo)
     {
       int.TryParse(Tabla[transicion][simbolo + 1], out int accion);
       return accion;

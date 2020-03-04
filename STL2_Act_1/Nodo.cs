@@ -401,6 +401,7 @@ namespace STL2_Act_1
         }
 
         Nodo fila = pila.Peek();
+        
         // columna = idreglas[regla];
         // transicion = tabla[fila][columna];
         // NoTerminal NT = new NoTerminal(idreglas[regla]);
@@ -415,7 +416,7 @@ namespace STL2_Act_1
 
   public class Estado : Nodo
   {
-    internal int numestado;
+    //internal int numestado;
   }
 }
 
