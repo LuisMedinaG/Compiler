@@ -12,8 +12,8 @@ namespace STL2_Act_1
     List<string[]> Tabla;
     List<Tuple<int, int>> Reglas;
 
-    static readonly string tableFile = @"C:\Users\Fabiola\Documents\GR2slrTable.txt";
-    static readonly string rulesFile = @"C:\Users\Fabiola\Documents\GR2slrRulesId.txt";
+    static readonly string tableFile = "GR2slrTable.txt";
+    static readonly string rulesFile = "GR2slrRulesId.txt";
 
     internal DataGridView tablePila;
     List<string> DetallesReglas;

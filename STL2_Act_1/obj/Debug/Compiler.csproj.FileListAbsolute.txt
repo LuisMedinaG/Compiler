@@ -1,0 +1,9 @@
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\bin\Debug\Compiler.exe.config
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\bin\Debug\Compiler.exe
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\bin\Debug\Compiler.pdb
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\obj\Debug\Compiler.csprojAssemblyReference.cache
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\obj\Debug\STL2_Act_1.MainForm.resources
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\obj\Debug\Compiler.Properties.Resources.resources
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\obj\Debug\Compiler.csproj.GenerateResource.cache
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\obj\Debug\Compiler.exe
+C:\Users\Fabiola\Documents\CUCEI\Seminario de Traductores de Lenguajes II\Compiler\STL2_Act_1\obj\Debug\Compiler.pdb

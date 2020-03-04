@@ -1,0 +1,43 @@
+19	1	Programa -> Definiciones
+20	0	Definiciones -> ''
+20	2	Definiciones -> Definicion Definiciones
+21	1	Definicion -> DefVar
+21	1	Definicion -> DefFunc
+22	4	DefVar -> tipo id ListaVar ;
+23	0	ListaVar -> ''
+23	3	ListaVar -> , id ListaVar
+24	6	DefFunc -> tipo id ( Parametros ) BloqFunc
+25	0	Parametros -> ''
+25	3	Parametros -> tipo id ListaParam
+26	0	ListaParam -> ''
+26	4	ListaParam -> , tipo id ListaParam
+27	3	BloqFunc -> { DefLocales }
+28	0	DefLocales -> ''
+28	2	DefLocales -> DefLocal DefLocales
+29	1	DefLocal -> DefVar
+29	1	DefLocal -> Sentencia
+30	0	Sentencias -> ''
+30	2	Sentencias ->Sentencia Sentencias
+31	4	Sentencia -> id = Expresion ;
+31	6	Sentencia -> if ( Expresion ) SentenciaBloque Otro
+31	5	Sentencia ->while ( Expresion ) Bloque
+31	3	Sentencia -> return Expresion ;
+31	2	Sentencia -> LlamadaFunc ;
+32	0	Otro -> ''
+32	2	Otro -> else SentenciaBloque
+33	3	Bloque -> { Sentencias }
+34	0	Argumentos -> ''
+34	2	Argumentos -> Expresion ListaArgumentos
+35	0	ListaArgumentos -> ''
+35	3	ListaArgumentos ->, Expresion ListaArgumentos
+36	1	Expresion -> LlamadaFunc
+36	1	Expresion -> id
+36	1	Expresion -> constante
+37	4	LlamadaFunc -> id ( Argumentos )
+38	1	SentenciaBloque -> Sentencia
+38	1	SentenciaBloque -> Bloque
+36	3	Expresion -> ( Expresion )
+36	3	Expresion -> Expresion opSuma Expresion
+36	3	Expresion -> Expresion opLogico Expresion
+36	3	Expresion -> Expresion opMul Expresion
+36	3	Expresion -> Expresion opRelac Expresion
