@@ -24,7 +24,7 @@ namespace STL2_Act_1
       siguiente = null;
     }
   }
-  /*-----------------------------------------------*/
+
   public class programa : Nodo
   {
     public programa(Stack<Nodo> pila)
@@ -269,15 +269,11 @@ namespace STL2_Act_1
 
   public class TEMPORALCLASS
   {
-    /// <summary>
-    /// Cambar comportamineto normal de tabla de analisis sintacitico
-    /// </summary>
     public void ARBOL_SINTACTICO_TABLA()
     {
-      /*aux - no originales*/
       Stack<Nodo> pila = new Stack<Nodo>();
-      int accion = 0;
-      int regla = 0;
+      //int accion = 0;
+      //int regla = 0;
 
       if (accion < 0) {
         regla = -(accion + 2);
@@ -419,4 +415,3 @@ namespace STL2_Act_1
     //internal int numestado;
   }
 }
-

@@ -29,31 +29,31 @@
         private void InitializeComponent()
         {
       this.components = new System.ComponentModel.Container();
-      this.txtBoxCadena = new System.Windows.Forms.TextBox();
+      this.textBox_Input = new System.Windows.Forms.TextBox();
       this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
       this.bttnLexico = new System.Windows.Forms.Button();
       this.numWord = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.word = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.tableLexico = new System.Windows.Forms.DataGridView();
-      this.bttnSintactico = new System.Windows.Forms.Button();
-      this.tablePila = new System.Windows.Forms.DataGridView();
+      this.table_Lexic = new System.Windows.Forms.DataGridView();
+      this.bttn_AnalyzeSintax = new System.Windows.Forms.Button();
+      this.table_Stack = new System.Windows.Forms.DataGridView();
       this.Paso = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Pila = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.cadenaentrada = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.Regla = new System.Windows.Forms.DataGridViewTextBoxColumn();
       ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tableLexico)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tablePila)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.table_Lexic)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.table_Stack)).BeginInit();
       this.SuspendLayout();
       // 
       // txtBoxOrg
       // 
-      this.txtBoxCadena.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.txtBoxCadena.Location = new System.Drawing.Point(12, 12);
-      this.txtBoxCadena.Multiline = true;
-      this.txtBoxCadena.Name = "txtBoxOrg";
-      this.txtBoxCadena.Size = new System.Drawing.Size(274, 241);
-      this.txtBoxCadena.TabIndex = 7;
+      this.textBox_Input.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.textBox_Input.Location = new System.Drawing.Point(12, 12);
+      this.textBox_Input.Multiline = true;
+      this.textBox_Input.Name = "txtBoxOrg";
+      this.textBox_Input.Size = new System.Drawing.Size(274, 241);
+      this.textBox_Input.TabIndex = 7;
       // 
       // bttnLexico
       // 
@@ -63,7 +63,7 @@
       this.bttnLexico.TabIndex = 14;
       this.bttnLexico.Text = "Lexico";
       this.bttnLexico.UseVisualStyleBackColor = true;
-      this.bttnLexico.Click += new System.EventHandler(this.ButtonAnalizadorLexico_Click);
+      this.bttnLexico.Click += new System.EventHandler(this.ButtonAnalyzeLexic_Click);
       // 
       // numWord
       // 
@@ -79,49 +79,49 @@
       // 
       // dataGridViewWords
       // 
-      this.tableLexico.AllowUserToAddRows = false;
-      this.tableLexico.AllowUserToDeleteRows = false;
-      this.tableLexico.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-      this.tableLexico.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      this.tableLexico.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+      this.table_Lexic.AllowUserToAddRows = false;
+      this.table_Lexic.AllowUserToDeleteRows = false;
+      this.table_Lexic.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+      this.table_Lexic.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.table_Lexic.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.word,
             this.numWord});
-      this.tableLexico.Location = new System.Drawing.Point(12, 314);
-      this.tableLexico.Name = "dataGridViewWords";
-      this.tableLexico.ReadOnly = true;
-      this.tableLexico.Size = new System.Drawing.Size(274, 204);
-      this.tableLexico.TabIndex = 6;
+      this.table_Lexic.Location = new System.Drawing.Point(12, 314);
+      this.table_Lexic.Name = "dataGridViewWords";
+      this.table_Lexic.ReadOnly = true;
+      this.table_Lexic.Size = new System.Drawing.Size(274, 204);
+      this.table_Lexic.TabIndex = 6;
       // 
       // bttnSintactico
       // 
-      this.bttnSintactico.Enabled = false;
-      this.bttnSintactico.Location = new System.Drawing.Point(152, 259);
-      this.bttnSintactico.Name = "bttnSintactico";
-      this.bttnSintactico.Size = new System.Drawing.Size(134, 49);
-      this.bttnSintactico.TabIndex = 15;
-      this.bttnSintactico.Text = "Sintactico";
-      this.bttnSintactico.UseVisualStyleBackColor = true;
-      this.bttnSintactico.Click += new System.EventHandler(this.ButtonAnalizadorSintactico_Click);
+      this.bttn_AnalyzeSintax.Enabled = false;
+      this.bttn_AnalyzeSintax.Location = new System.Drawing.Point(152, 259);
+      this.bttn_AnalyzeSintax.Name = "bttnSintactico";
+      this.bttn_AnalyzeSintax.Size = new System.Drawing.Size(134, 49);
+      this.bttn_AnalyzeSintax.TabIndex = 15;
+      this.bttn_AnalyzeSintax.Text = "Sintactico";
+      this.bttn_AnalyzeSintax.UseVisualStyleBackColor = true;
+      this.bttn_AnalyzeSintax.Click += new System.EventHandler(this.ButtonAnalyzeSintax_Click);
       // 
       // tablePila
       // 
-      this.tablePila.AllowUserToAddRows = false;
-      this.tablePila.AllowUserToDeleteRows = false;
-      this.tablePila.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      this.tablePila.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+      this.table_Stack.AllowUserToAddRows = false;
+      this.table_Stack.AllowUserToDeleteRows = false;
+      this.table_Stack.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.table_Stack.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Paso,
             this.Pila,
             this.cadenaentrada,
             this.Regla});
-      this.tablePila.Location = new System.Drawing.Point(292, 12);
-      this.tablePila.Name = "tablePila";
-      this.tablePila.ReadOnly = true;
-      this.tablePila.ShowCellErrors = false;
-      this.tablePila.ShowCellToolTips = false;
-      this.tablePila.ShowEditingIcon = false;
-      this.tablePila.ShowRowErrors = false;
-      this.tablePila.Size = new System.Drawing.Size(565, 506);
-      this.tablePila.TabIndex = 16;
+      this.table_Stack.Location = new System.Drawing.Point(292, 12);
+      this.table_Stack.Name = "tablePila";
+      this.table_Stack.ReadOnly = true;
+      this.table_Stack.ShowCellErrors = false;
+      this.table_Stack.ShowCellToolTips = false;
+      this.table_Stack.ShowEditingIcon = false;
+      this.table_Stack.ShowRowErrors = false;
+      this.table_Stack.Size = new System.Drawing.Size(565, 506);
+      this.table_Stack.TabIndex = 16;
       // 
       // Paso
       // 
@@ -160,31 +160,31 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(869, 530);
-      this.Controls.Add(this.tablePila);
-      this.Controls.Add(this.bttnSintactico);
+      this.Controls.Add(this.table_Stack);
+      this.Controls.Add(this.bttn_AnalyzeSintax);
       this.Controls.Add(this.bttnLexico);
-      this.Controls.Add(this.txtBoxCadena);
-      this.Controls.Add(this.tableLexico);
+      this.Controls.Add(this.textBox_Input);
+      this.Controls.Add(this.table_Lexic);
       this.Name = "MainForm";
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "Analizador";
       ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tableLexico)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tablePila)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.table_Lexic)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.table_Stack)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.TextBox txtBoxCadena;
+        private System.Windows.Forms.TextBox textBox_Input;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Button bttnLexico;
         private System.Windows.Forms.DataGridViewTextBoxColumn numWord;
         private System.Windows.Forms.DataGridViewTextBoxColumn word;
-        private System.Windows.Forms.DataGridView tableLexico;
-        private System.Windows.Forms.Button bttnSintactico;
-        private System.Windows.Forms.DataGridView tablePila;
+        private System.Windows.Forms.DataGridView table_Lexic;
+        private System.Windows.Forms.Button bttn_AnalyzeSintax;
+        private System.Windows.Forms.DataGridView table_Stack;
         private System.Windows.Forms.DataGridViewTextBoxColumn Paso;
         private System.Windows.Forms.DataGridViewTextBoxColumn Pila;
         private System.Windows.Forms.DataGridViewTextBoxColumn cadenaentrada;

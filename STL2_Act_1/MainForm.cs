@@ -5,38 +5,38 @@ namespace STL2_Act_1
 {
   public partial class MainForm : Form
   {
-    Lexico lexico;
-    Sintactico sintactico;
+    Lexic lexic;
+    Parser syntactic;
 
     public MainForm()
     {
       InitializeComponent();
     }
 
-    private void ButtonAnalizadorLexico_Click(object sender, EventArgs e)
+    private void ButtonAnalyzeLexic_Click(object sender, EventArgs e)
     {
-      lexico = new Lexico();
-      lexico.Analizar(txtBoxCadena.Text);
+      lexic = new Lexic();
+      lexic.Analyse(textBox_Input.Text);
 
-      tableLexico.Rows.Clear();
-      foreach (Token t in lexico.Tokens) {
-        tableLexico.Rows.Add(t.Dato, t.Tipo);
+      table_Lexic.Rows.Clear();
+      foreach (Token t in lexic.Tokens) {
+        table_Lexic.Rows.Add(t.Data, t.Type);
       }
-      bttnSintactico.Enabled = true;
+      bttn_AnalyzeSintax.Enabled = true;
     }
 
-    private void ButtonAnalizadorSintactico_Click(object sender, EventArgs e)
+    private void ButtonAnalyzeSintax_Click(object sender, EventArgs e)
     {
-      sintactico = new Sintactico(lexico) {
-        tablePila = tablePila
+      syntactic = new Parser(lexic.Tokens) {
+        table_Stack = table_Stack
       };
-      tablePila.Rows.Clear();
-      if (sintactico.Analizar()) {
-        MessageBox.Show("¡Sintaxis correcta!");
+      table_Stack.Rows.Clear();
+      if (syntactic.Analyze()) {
+        MessageBox.Show("¡Sintaxis correcta!", "Resultado");
       } else {
-        MessageBox.Show("Sintaxis Incorrecta.");
+        MessageBox.Show("Sintaxis Incorrecta.", "Resultado");
       }
-      bttnSintactico.Enabled = false;
+      bttn_AnalyzeSintax.Enabled = false;
     }
   }
 }
