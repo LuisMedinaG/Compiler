@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace STL2_Act_1
+namespace Compiler
 {
     static class Program
     {

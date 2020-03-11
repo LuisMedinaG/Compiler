@@ -1,4 +1,4 @@
-﻿namespace STL2_Act_1
+﻿namespace Compiler
 {
     partial class MainForm
     {

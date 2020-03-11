@@ -1,19 +1,7 @@
 ﻿using System.Collections.Generic;
 // TODO : Change lexical analysis to hash table
-namespace STL2_Act_1
+namespace Compiler
 {
-  class Token
-  {
-    public string Data { get; set; }
-    public int Type { get; set; }
-
-    public Token() { }
-    public Token(string Dato, int Tipo)
-    {
-      this.Data = Dato; this.Type = Tipo;
-    }
-  }
-
   class Lexic
   {
     public Queue<Token> Tokens { get; set; }

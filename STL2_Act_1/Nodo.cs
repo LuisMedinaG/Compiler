@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace STL2_Act_1
+namespace Compiler
 {
+  /*
   public class Nodo
   {
     public string simbolo;
@@ -9,10 +10,12 @@ namespace STL2_Act_1
     public static string ambito;
     public char tipodato;
     public int TipoNodo;
+    //public Token token { get; set; }
 
     public Nodo()
     {
       simbolo = "";
+      token = null;
       ambito = "";
       siguiente = null;
     }
@@ -25,9 +28,9 @@ namespace STL2_Act_1
     }
   }
 
-  public class programa : Nodo
+  public class Programa : Nodo
   {
-    public programa(Stack<Nodo> pila)
+    public Programa(Stack<Nodo> pila)
     {
       pila.Pop();//quita estado
       siguiente = (pila.Pop());
@@ -260,7 +263,6 @@ namespace STL2_Act_1
 
   public class Constructores
   {
-
     public Constructores()
     {
 
@@ -269,20 +271,22 @@ namespace STL2_Act_1
 
   public class TEMPORALCLASS
   {
+        
     public void ARBOL_SINTACTICO_TABLA()
     {
       Stack<Nodo> pila = new Stack<Nodo>();
-      //int accion = 0;
-      //int regla = 0;
+      int accion = 0;
+      int regla = 0;
 
-      if (accion < 0) {
+      if (accion < 0)
+      {
         regla = -(accion + 2);
         Nodo nodo = new Nodo();
         nodo = null;
-
-        switch (regla + 1) {
+        switch (regla + 1)
+        {
           case 1:  //<programa> ::= <Definiciones> 
-            nodo = new programa(pila);
+            nodo = new Programa(pila);
             break;
           case 3://<Definiciones> ::= <Definicion> <Definiciones>
           case 16://<DefLocales> ::= <DefLocal> <DefLocales> 	
@@ -396,8 +400,7 @@ namespace STL2_Act_1
             break;
         }
 
-        Nodo fila = pila.Peek();
-        
+        // Nodo fila = pila.Peek();
         // columna = idreglas[regla];
         // transicion = tabla[fila][columna];
         // NoTerminal NT = new NoTerminal(idreglas[regla]);
@@ -414,4 +417,5 @@ namespace STL2_Act_1
   {
     //internal int numestado;
   }
+  */
 }
