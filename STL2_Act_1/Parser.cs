@@ -5,19 +5,34 @@ using System.Collections.Generic;
 
 namespace Compiler
 {
+  class Rule : Node
+  {
+    public int ColIdx { get; set; }
+    public int PopNum { get; set; }
+    public string Detail { get; set; }
+
+    public Rule() { }
+    public Rule(int ColIdx, int PopNum, string Detail, string Type)
+    {
+      this.ColIdx = ColIdx;
+      this.PopNum = PopNum;
+      this.Detail = Detail;
+      this.Type = Type;
+    }
+  }
+
   class Parser
   {
     readonly Queue<Token> tokens;
     readonly Stack<Node> stack;
 
-    readonly List<string[]> table;
-    readonly List<Tuple<int, int>> rules;
+    readonly List<string[]> actionTable;
+    readonly List<Rule> grammarRules;
 
-    const string tableFile = "GR2slrTable.txt";
+    const string tableFile = "GR2slrTableBien.txt";
     const string rulesFile = "GR2slrRulesId.txt";
 
     internal DataGridView table_Stack;
-    List<string> ruleDetails;
     string ruleDetail;
 
     public Parser(Queue<Token> tokens)
@@ -25,191 +40,226 @@ namespace Compiler
       this.tokens = tokens;
 
       stack = new Stack<Node>();
-      table = new List<string[]>();
-      rules = new List<Tuple<int, int>>();
-      ruleDetails = new List<string>();
+      actionTable = new List<string[]>();
+      grammarRules = new List<Rule>();
 
-      stack.Push(new Node(0));
-
-      BuildAnalysisTable();
+      BuildActionTable();
       BuildGrammarRules();
     }
 
-    public bool Analyze()
+    public bool Parse()
     {
+      table_Stack.Rows.Clear();
+      if(actionTable.Count == 0 || grammarRules.Count == 0) return false;
+
+      stack.Push(new Node(0));
       Token token = tokens.Dequeue();
       while(stack.Count > 0) {
-        PRINT_STACK();
+        int state = stack.Peek().State; // State on top of stack
+        int t = ACTION_GOTO(state, token.Type);
 
-        int transition = stack.Peek().State;
-        int action = ACTION(transition, token.Type);
-
-        if(action == -1) {
-          /***** ACCEPT *****/
-          return true;
-        } else if(action == 0) {
-          /***** ERROR *****/
-          return false;
-        } else if(action > 0) {
-          /***** SHIFT *****/
-          stack.Push(new Node(token.Type));
+        if(t > 0) {
+          /* SHIFT */
           stack.Push(new Node(token));
+          stack.Push(new Node(t));
           token = tokens.Dequeue();
-        } else if(action < 0) {
-          /***** REDUCTION *****/
-          int rule = Math.Abs(action);
-          Node node = RuleConstructor(rule);
+        } else if(t < -1) {
+          /* REDUCE */
+          int ruleIdx = Math.Abs(t) - 1;
+          Rule rule = grammarRules[ruleIdx];
 
-          int row = stack.Peek().State;
-          int col = rules[rule].Item1;
-          transition = ACTION(row, col);
+          Node node = PopStack(ruleIdx, rule.Type);
+
+          state = ACTION_GOTO(stack.Peek().State, rule.ColIdx);
 
           stack.Push(node);
-          stack.Push(new Node(transition));
+          stack.Push(new Node(state));
+        } else if(t == -1) {
+          /* ACCEPT */
+          return true;
+        } else {
+          /* ERROR */
+          return false;
         }
+        PRINT_STACK();
       }
       return false;
     }
 
-    private Node RuleConstructor(int rule)
+    private Node PopStack(int ruleIdx, string type)
     {
-      Node node = new Node();
-      switch(rule) {
-        case 1:  //<programa> ::= <Definiciones>
-          node = new Programa(stack);
+      Node node = new Node {
+        Type = type
+      };
+      Node aux;
+
+      switch(ruleIdx) {
+        case 0:  //<programa> ::= <Definiciones>
+          stack.Pop();
+          node.Next = stack.Pop();
           break;
-        case 3://<Definiciones> ::= <Definicion> <Definiciones> 
-        case 16://<DefLocales> ::= <DefLocal> <DefLocales> 
-        case 20://<Sentencias> ::= <Sentencia> <Sentencias>
-        case 30://<Argumentos> ::= <Expresion> <ListaArgumentos> 
-          stack.Pop();//quita estado
-          Node aux = stack.Pop();//quita <definiciones>
-          stack.Pop();//quita estado
-          node = (stack.Pop());//quita <definicion>
+        case 1: // Definiciones -> ''
+          break;
+        case 2://<Definiciones> ::= <Definicion> <Definiciones> 
+        case 15://<DefLocales> ::= <DefLocal> <DefLocales> 
+        case 19://<Sentencias> ::= <Sentencia> <Sentencias>
+        case 29://<Argumentos> ::= <Expresion> <ListaArgumentos> 
+          stack.Pop();
+          aux = stack.Pop();
+          stack.Pop();
+          node = stack.Pop();
           node.Next = aux;
           break;
-        case 4://<Definicion> ::= <DefVar>
-        case 5://<Definicion> ::= <DefFunc> 
-        case 17://<DefLocal> ::= <DefVar> 
-        case 18://<DefLocal> ::= <Sentencia> 
-        // case 35://<Expresion> ::= <LlamadaFunc> 
-        case 37://<SentenciaBloque> ::= <Sentencia> 
-        case 38://<SentenciaBloque> ::= <Bloque> 
-          stack.Pop();//quita estado
-          node = stack.Pop();//quita defvar
+        case 3://<Definicion> ::= <DefVar>
+        case 4://<Definicion> ::= <DefFunc> 
+        case 16://<DefLocal> ::= <DefVar> 
+        case 17://<DefLocal> ::= <Sentencia> 
+        case 32://<Expresion> ::= <LlamadaFunc> 
+        case 36://<SentenciaBloque> ::= <Sentencia> 
+        case 37://<SentenciaBloque> ::= <Bloque> 
+          stack.Pop();
+          node = stack.Pop();
           break;
-        case 6:// <DefVar> ::= tipo id <ListaVar> ;
+        case 5:// <DefVar> ::= tipo id <ListaVar> ;
           node = new DefVar(stack);
           break;
-        case 8://<ListaVar> ::= , id <ListaVar>
-          stack.Pop();//quita estado
-          Node leftVar = stack.Pop();
-          stack.Pop();//quita estado
-          node = new Id(stack.Pop().token);//quita id
-          node.Next = leftVar;
-          stack.Pop();//quita estado
-          stack.Pop();//quita la coma
+        case 7://<ListaVar> ::= , id <ListaVar>
+          stack.Pop();
+          aux = stack.Pop();
+          stack.Pop();
+          node = new Id(stack.Pop().token);
+          node.Next = aux;
+          stack.Pop();
+          stack.Pop();
           break;
-        case 9://<DefFunc> ::= tipo id ( <Parametros> ) <BloqFunc>
+        case 8://<DefFunc> ::= tipo id ( <Parametros> ) <BloqFunc>
           node = new DefFunc(stack);
           break;
-        case 11://<Parametros> ::= tipo id <ListaParam>
+        case 10://<Parametros> ::= tipo id <ListaParam>
           node = new Parametros(stack);
           break;
-        case 13://<ListaParam> ::= , tipo id <ListaParam>
+        case 12://<ListaParam> ::= , tipo id <ListaParam>
           node = new Parametros(stack);
           stack.Pop();//quita estado;
           stack.Pop();//quita la coma
           break;
-        case 14://<BloqFunc> ::= { <DefLocales> }
-        case 28://<Bloque> ::= { <Sentencias> } 
-        case 39://<Expresion> ::= ( <Expresion> ) 
+        case 13://<BloqFunc> ::= { <DefLocales> }
+        case 27://<Bloque> ::= { <Sentencias> } 
+        case 38://<Expresion> ::= ( <Expresion> ) 
           stack.Pop();//quita estado
           stack.Pop();//quita }
           stack.Pop();//quita estado
-          node = (stack.Pop());//quita <deflocales> o <sentencias>
+          node = stack.Pop();//quita <deflocales> o <sentencias>
           stack.Pop();
           stack.Pop();//quita la {
           break;
-        case 21: //<Sentencia> ::= id = <Expresion> ;
+        case 20: //<Sentencia> ::= id = <Expresion> ;
           node = new Asignacion(stack);
           break;
-        case 22://<Sentencia> ::= if ( <Expresion> ) <SentenciaBloque> <Otro>
-          //node = new If(stack) // TODO : Agregar la clase para If con su constructor
+        case 21://<Sentencia> ::= if ( <Expresion> ) <SentenciaBloque> <Otro>
+          node = new If(stack);
           break;
-        case 23://<Sentencia> ::= while ( <Expresion> ) <Bloque> 
+        case 22://<Sentencia> ::= while ( <Expresion> ) <Bloque> 
           node = new While(stack);
+          //node.Type = "While";
           break;
-        case 24://<Sentencia> ::= return <Expresion> ;
-          // node = new Return(stack);
+        case 23://<Sentencia> ::= return <Expresion> ;
+          stack.Pop();
+          stack.Pop();
+          stack.Pop();
+          node = stack.Pop();
+          stack.Pop();
+          stack.Pop();
+          //node.Type = "Return";
           break;
-        case 25://<Sentencia> ::= <LlamadaFunc> ; 
+        case 24://<Sentencia> ::= <LlamadaFunc> ; 
           stack.Pop();
           stack.Pop();//quita ;
           stack.Pop();
           node = stack.Pop();//quita llamadafunc
           break;
-        case 27://<Otro> ::= else <SentenciaBloque> 
+        case 26://<Otro> ::= else <SentenciaBloque> 
           stack.Pop();
-          node = (stack.Pop());//quita sentencia bloque
+          node = stack.Pop(); //quita sentencia bloque
           stack.Pop();
-          stack.Pop();//quita el else
+          stack.Pop(); //quita el else
           break;
-        case 32:// <ListaArgumentos> ::= , <Expresion> <ListaArgumentos> 
+        case 31:// <ListaArgumentos> ::= , <Expresion> <ListaArgumentos> 
           stack.Pop();
-          aux = (stack.Pop());//quita la lsta de argumentos
+          aux = stack.Pop();//quita la lsta de argumentos
           stack.Pop();
           node = (stack.Pop());//quita expresion
           stack.Pop();
           stack.Pop();//quita la ,
           node.Next = aux;
           break;
-        //case 33:
-        //case 34:
-        //case 36:
-        //case 40:
-        //case 41:
-        //case 42:
-        //case 43:
-        //aqui cae R2,R7,R10,R12,R15,R19,R26,R29,R31
+        case 33://Expresion->id
+          stack.Pop();
+          node = new Id(stack.Pop().token);
+          //node.Type = "Id";
+          break;
+        case 34:
+          stack.Pop();
+          node = new Constante(stack.Pop().token);
+          break;
+        case 35:
+          node = new Llamadafunc(stack);
+          break;
+        case 39: // Expresion -> Expresion opSuma Expresion
+        case 40: // Expresion -> Expresion opLogico Expresion
+        case 41: // Expresion -> Expresion opMul Expresion
+        case 42: // Expresion -> Expresion opRelac Expresion
+          node = new Expresion(stack);
+          break;
+        //aqui cae R1,R6,R9,R11,R14,R18,R25,R28,R30
         default:
-          for(int i = 0; i < rules[rule].Item2 * 2; i++) {
-            if(stack.Count == 0) {/*return false;*/}
-            stack.Pop();
-          }
           break;
       }
-      ruleDetail = ruleDetails[rule];
       return node;
     }
 
-    private int ACTION(int state, int token)
+    private int ACTION_GOTO(int state, int token)
     {
-      int.TryParse(table[state][token + 1], out int action);
-      return action;
+      if(int.TryParse(actionTable[state][token + 1], out int action))
+        return action;
+      return 0;
     }
 
     /**************************** Auxiliar functions *******************************/
     private void PRINT_STACK()
     {
-      string currString = GET_CADENA();
+      string input = GET_INPUT();
       string queue = "";
-      /*
-      foreach (int p in stack) {
-        queue = $"{p}, {queue}";
+
+      foreach(Node n in stack) {
+        if(n.Type != null)
+          queue = $"{n.Type}, {queue}";
+        else if(n.token != null)
+          queue = $"{n.token.Value}, {queue}";
+        else
+          queue = $"{n.State}, {queue}";
       }
-      */
-      table_Stack.Rows.Add(table_Stack.Rows.Count + 1, queue, currString, ruleDetail);
+      table_Stack.Rows.Add(table_Stack.Rows.Count + 1, queue, input, ruleDetail);
       ruleDetail = "";
     }
 
-    private string GET_CADENA()
+    private string GET_INPUT()
     {
-      string currString = "";
+      string input = "";
       foreach(Token t in tokens) {
-        currString += t.Data + ' ';
+        input += t.Value + ' ';
       }
-      return currString;
+      return input;
+    }
+
+    private void BuildActionTable()
+    {
+      if(File.Exists(tableFile)) {
+        string[] lines = File.ReadAllLines(tableFile);
+        foreach(string line in lines) {
+          actionTable.Add(line.Split(null));
+        }
+      }
     }
 
     private void BuildGrammarRules()
@@ -218,27 +268,17 @@ namespace Compiler
         string[] lines = File.ReadAllLines(rulesFile);
 
         foreach(string line in lines) {
-          string[] regla = line.Split(null);
-          string reglaStr = "";
-          for(int i = 2; i < regla.Length; i++) {
-            reglaStr += regla[i] + ' ';
+          string[] rule = line.Split(null);
+          string detail = "";
+          for(int i = 2; i < rule.Length; i++) {
+            detail += rule[i] + ' ';
           }
-          ruleDetails.Add(reglaStr);
-          _ = int.TryParse(regla[0], out int rule1);
-          int.TryParse(regla[1], out int rule2);
-          rules.Add(new Tuple<int, int>(rule1, rule2));
+          _ = int.TryParse(rule[0], out int id);
+          _ = int.TryParse(rule[1], out int popNum);
+          grammarRules.Add(new Rule(id, popNum, detail, rule[2]));
         }
       }
     }
 
-    private void BuildAnalysisTable()
-    {
-      if(File.Exists(tableFile)) {
-        string[] lines = File.ReadAllLines(tableFile);
-        foreach(string line in lines) {
-          table.Add(line.Split(null));
-        }
-      }
-    }
   }
 }

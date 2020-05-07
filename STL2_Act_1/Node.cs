@@ -7,17 +7,11 @@ namespace Compiler
     internal Token token { get; set; }
     internal Node Next { get; set; }
     internal int State { get; set; }
+    internal string Type { get; set; }
 
     internal Node()
     {
       token = null;
-      Next = null;
-      State = -1;
-    }
-
-    internal Node(Token Token)
-    {
-      this.token = Token;
       Next = null;
       State = -1;
     }
@@ -28,17 +22,16 @@ namespace Compiler
       Next = null;
       this.State = State;
     }
-  }
-  /*************************************/
-  internal class Programa : Node
-  {
-    internal Programa(Stack<Node> pila)
+
+    internal Node(Token Token)
     {
-      pila.Pop(); //quita estado
-      Next = pila.Pop();
+      this.token = Token;
+      Next = null;
+      State = -1;
     }
   }
 
+  /*************************************/
   internal class Id : Node
   {
     internal Id(Token token)
@@ -66,7 +59,7 @@ namespace Compiler
       pila.Pop(); //quita estado
       pila.Pop(); //quita  ;
       pila.Pop(); //quita estado estado
-      lvar = (pila.Pop()); //quita ListaVar
+      lvar = pila.Pop(); //quita ListaVar
       pila.Pop(); //quita estado
       id = new Id(pila.Pop().token); //quita Id
       pila.Pop(); //quita estado
@@ -81,22 +74,20 @@ namespace Compiler
     Node parametros;
     Node bloqFunc;
 
-    internal static string varlocal;
-
     internal DefFunc(Stack<Node> pila)//<DefFunc> ::= tipo id ( <Parametros> ) <BloqFunc> 
     {
-      pila.Pop();//quita estado
-      bloqFunc = (pila.Pop());//quita <bloqfunc>
-      pila.Pop();//quita estado
-      pila.Pop();//quita )
-      pila.Pop();//quita estado
-      parametros = (pila.Pop());//quita <parametros>
-      pila.Pop();//quita estado
-      pila.Pop();//quita (
-      pila.Pop();//quita estado
-      id = new Id((pila.Pop()).token);//quita id
-      pila.Pop();//quita estado
-      tipo = new Tipo((pila.Pop()).token);//quita el tipo
+      pila.Pop(); // quita estado
+      bloqFunc = pila.Pop(); // quita <BloqFunc>
+      pila.Pop(); // quita estado
+      pila.Pop(); // quita )
+      pila.Pop(); // quita estado
+      parametros = pila.Pop(); // quita <parametros>
+      pila.Pop(); // quita estado
+      pila.Pop(); // quita (
+      pila.Pop(); // quita estado
+      id = new Id(pila.Pop().token); // quita id
+      pila.Pop(); // quita estado
+      tipo = new Tipo(pila.Pop().token);//quita el tipo
     }
   }
 
@@ -104,15 +95,16 @@ namespace Compiler
   {
     Node tipo;
     Node id;
+
     internal Node lparametros;
     internal Parametros(Stack<Node> pila)
     {
-      pila.Pop();//quita estado
-      lparametros = (pila.Pop());//quita la lista de aprametros
-      pila.Pop();//quita estado
-      id = new Id((pila.Pop()).token);//quita el id
-      pila.Pop(); //quita estado
-      tipo = new Tipo((pila.Pop()).token);//quita el tipo
+      pila.Pop(); // quita estado
+      lparametros = pila.Pop();//quita la lista de aprametros
+      pila.Pop(); // quita estado
+      id = new Id(pila.Pop().token);//quita el id
+      pila.Pop(); // quita estado
+      tipo = new Tipo(pila.Pop().token);//quita el tipo
     }
   }
 
@@ -123,14 +115,15 @@ namespace Compiler
 
     internal Asignacion(Stack<Node> pila)//<Sentencia> ::= id = <Expresion> ;
     {
+      Type = "Asignacion";
       pila.Pop();
       pila.Pop();//quita la ;
       pila.Pop();
-      expresion = (pila.Pop());//quita expresion
+      expresion = pila.Pop();//quita expresion
       pila.Pop();
       pila.Pop();//quita =
       pila.Pop();
-      id = new Id((pila.Pop()).token);//quita id
+      id = new Id(pila.Pop().token);//quita id
     }
   }
 
@@ -141,6 +134,7 @@ namespace Compiler
 
     internal While(Stack<Node> pila)
     {
+      Type = "While";
       pila.Pop();
       bloque = (pila.Pop());//quita bloque
       pila.Pop();
@@ -162,6 +156,7 @@ namespace Compiler
 
     internal Dowhile(Stack<Node> pila)
     {
+      Type = "DoWhile";
       pila.Pop();
       pila.Pop();//quita ;
       pila.Pop();
@@ -189,6 +184,7 @@ namespace Compiler
 
     internal For(Stack<Node> pila)
     {
+      Type = "For";
       pila.Pop();
       senbloque = (pila.Pop());//quita senteciabloque
       pila.Pop();
@@ -213,7 +209,30 @@ namespace Compiler
     internal Constante(Token _token)
     {
       token = _token;
-      // clase = "cons";
+    }
+  }
+
+  internal class If : Node
+  {
+    Node otro;
+    Node sentenciaBloque;
+    Node expresion;
+
+    internal If(Stack<Node> pila)//<Sentencia> ::= if ( <Expresion> ) <SentenciaBloque> <Otro>
+    {
+      Type = "If";
+      pila.Pop();
+      otro = pila.Pop();//quita Otro
+      pila.Pop();
+      sentenciaBloque = pila.Pop();//quita SentenciaBloque
+      pila.Pop();
+      pila.Pop(); // )
+      pila.Pop();
+      expresion = pila.Pop();
+      pila.Pop();
+      pila.Pop(); // (
+      pila.Pop();
+      pila.Pop(); // if
     }
   }
 
@@ -224,15 +243,31 @@ namespace Compiler
 
     internal Llamadafunc(Stack<Node> pila)
     {
-      // clase = "fun";
       pila.Pop();
       pila.Pop();//quita )
       pila.Pop();
-      argumentos = (pila.Pop());//quita exprecion
+      argumentos = (pila.Pop());//quita expresion
       pila.Pop();
       pila.Pop();//quita (
       pila.Pop();
       id = new Id((pila.Pop()).token);//quita id
+    }
+  }
+
+  internal class Expresion : Node //Expresion -> Expresion opSuma Expresion
+  {
+    Node exp1;
+    Node ope;
+    Node exp2;
+
+    internal Expresion(Stack<Node> stack)
+    {
+      stack.Pop();
+      exp1 = stack.Pop();
+      stack.Pop();
+      ope = stack.Pop();
+      stack.Pop();
+      exp2 = stack.Pop();
     }
   }
   /*************************************/

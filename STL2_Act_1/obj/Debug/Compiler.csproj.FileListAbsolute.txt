@@ -16,3 +16,13 @@ C:\Users\DELL\Documents\Universidad\4_SemTraductoresII\STL2_Act_1\bin\Debug\Comp
 C:\Users\DELL\Documents\Universidad\4_SemTraductoresII\STL2_Act_1\bin\Debug\Compiler.exe
 C:\Users\DELL\Documents\Universidad\4_SemTraductoresII\STL2_Act_1\bin\Debug\Compiler.pdb
 C:\Users\DELL\Documents\Universidad\4_SemTraductoresII\STL2_Act_1\obj\Debug\Compiler.MainForm.resources
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\bin\Debug\Compiler.exe.config
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\bin\Debug\Compiler.exe
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\bin\Debug\Compiler.pdb
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\obj\Debug\Compiler.csprojAssemblyReference.cache
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\obj\Debug\Compiler.MainForm.resources
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\obj\Debug\Compiler.Properties.Resources.resources
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\obj\Debug\Compiler.csproj.GenerateResource.cache
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\obj\Debug\Compiler.csproj.CoreCompileInputs.cache
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\obj\Debug\Compiler.exe
+C:\Users\DELL\Documents\University-Local\Compiler\STL2_Act_1\obj\Debug\Compiler.pdb
