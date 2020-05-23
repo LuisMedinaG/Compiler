@@ -11,9 +11,10 @@
       Type = 0;
     }
 
-    public Token(string Data, int Type)
+    public Token(string Value, int Type)
     {
-      this.Value = Data; this.Type = Type;
+      this.Value = Value;
+      this.Type = Type;
     }
   }
 }

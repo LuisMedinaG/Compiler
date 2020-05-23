@@ -52,12 +52,12 @@
       this.textBox_Input.Location = new System.Drawing.Point(12, 12);
       this.textBox_Input.Multiline = true;
       this.textBox_Input.Name = "textBox_Input";
-      this.textBox_Input.Size = new System.Drawing.Size(225, 229);
+      this.textBox_Input.Size = new System.Drawing.Size(225, 294);
       this.textBox_Input.TabIndex = 7;
       // 
       // bttnLexico
       // 
-      this.bttnLexico.Location = new System.Drawing.Point(12, 247);
+      this.bttnLexico.Location = new System.Drawing.Point(12, 312);
       this.bttnLexico.Name = "bttnLexico";
       this.bttnLexico.Size = new System.Drawing.Size(105, 49);
       this.bttnLexico.TabIndex = 14;
@@ -86,16 +86,16 @@
       this.table_Lexic.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.word,
             this.numWord});
-      this.table_Lexic.Location = new System.Drawing.Point(12, 302);
+      this.table_Lexic.Location = new System.Drawing.Point(12, 367);
       this.table_Lexic.Name = "table_Lexic";
       this.table_Lexic.ReadOnly = true;
-      this.table_Lexic.Size = new System.Drawing.Size(225, 216);
+      this.table_Lexic.Size = new System.Drawing.Size(225, 280);
       this.table_Lexic.TabIndex = 6;
       // 
       // bttn_AnalyzeSintax
       // 
       this.bttn_AnalyzeSintax.Enabled = false;
-      this.bttn_AnalyzeSintax.Location = new System.Drawing.Point(123, 247);
+      this.bttn_AnalyzeSintax.Location = new System.Drawing.Point(123, 312);
       this.bttn_AnalyzeSintax.Name = "bttn_AnalyzeSintax";
       this.bttn_AnalyzeSintax.Size = new System.Drawing.Size(114, 49);
       this.bttn_AnalyzeSintax.TabIndex = 15;
@@ -120,7 +120,7 @@
       this.table_Stack.ShowCellToolTips = false;
       this.table_Stack.ShowEditingIcon = false;
       this.table_Stack.ShowRowErrors = false;
-      this.table_Stack.Size = new System.Drawing.Size(614, 506);
+      this.table_Stack.Size = new System.Drawing.Size(826, 635);
       this.table_Stack.TabIndex = 16;
       // 
       // Paso
@@ -159,7 +159,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(869, 530);
+      this.ClientSize = new System.Drawing.Size(1081, 659);
       this.Controls.Add(this.table_Stack);
       this.Controls.Add(this.bttn_AnalyzeSintax);
       this.Controls.Add(this.bttnLexico);

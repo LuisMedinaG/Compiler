@@ -5,22 +5,6 @@ using System.Collections.Generic;
 
 namespace Compiler
 {
-  class Rule : Node
-  {
-    public int ColIdx { get; set; }
-    public int PopNum { get; set; }
-    public string Detail { get; set; }
-
-    public Rule() { }
-    public Rule(int ColIdx, int PopNum, string Detail, string Type)
-    {
-      this.ColIdx = ColIdx;
-      this.PopNum = PopNum;
-      this.Detail = Detail;
-      this.Type = Type;
-    }
-  }
-
   class Parser
   {
     readonly Queue<Token> tokens;
@@ -32,7 +16,7 @@ namespace Compiler
     const string tableFile = "GR2slrTableBien.txt";
     const string rulesFile = "GR2slrRulesId.txt";
 
-    internal DataGridView table_Stack;
+    internal DataGridView TableStack;
     string ruleDetail;
 
     public Parser(Queue<Token> tokens)
@@ -49,7 +33,9 @@ namespace Compiler
 
     public bool Parse()
     {
-      table_Stack.Rows.Clear();
+      TableStack.Rows.Clear();
+      PrintStack();
+
       if(actionTable.Count == 0 || grammarRules.Count == 0) return false;
 
       stack.Push(new Node(0));
@@ -65,15 +51,14 @@ namespace Compiler
           token = tokens.Dequeue();
         } else if(t < -1) {
           /* REDUCE */
-          int ruleIdx = Math.Abs(t) - 1;
-          Rule rule = grammarRules[ruleIdx];
+          Rule rule = grammarRules[Math.Abs(t) - 1];
+          Node node = BuildTree(rule);
 
-          Node node = PopStack(ruleIdx, rule.Type);
-
-          state = ACTION_GOTO(stack.Peek().State, rule.ColIdx);
-
+          state = ACTION_GOTO(stack.Peek().State, rule.Column);
+          
           stack.Push(node);
           stack.Push(new Node(state));
+          ruleDetail = rule.Detail;
         } else if(t == -1) {
           /* ACCEPT */
           return true;
@@ -81,19 +66,24 @@ namespace Compiler
           /* ERROR */
           return false;
         }
-        PRINT_STACK();
+        PrintStack();
       }
       return false;
     }
 
-    private Node PopStack(int ruleIdx, string type)
+    private int ACTION_GOTO(int state, int token)
     {
-      Node node = new Node {
-        Type = type
-      };
+      if(int.TryParse(actionTable[state][token + 1], out int action))
+        return action;
+      return 0;
+    }
+
+    private Node BuildTree(Rule rule)
+    {
+      Node node = new Node(rule);
       Node aux;
 
-      switch(ruleIdx) {
+      switch(rule.Id) {
         case 0:  //<programa> ::= <Definiciones>
           stack.Pop();
           node.Next = stack.Pop();
@@ -119,18 +109,13 @@ namespace Compiler
         case 37://<SentenciaBloque> ::= <Bloque> 
           stack.Pop();
           node = stack.Pop();
+          //node.Next;
           break;
         case 5:// <DefVar> ::= tipo id <ListaVar> ;
           node = new DefVar(stack);
           break;
         case 7://<ListaVar> ::= , id <ListaVar>
-          stack.Pop();
-          aux = stack.Pop();
-          stack.Pop();
-          node = new Id(stack.Pop().token);
-          node.Next = aux;
-          stack.Pop();
-          stack.Pop();
+          node = new ListVar(stack);
           break;
         case 8://<DefFunc> ::= tipo id ( <Parametros> ) <BloqFunc>
           node = new DefFunc(stack);
@@ -161,20 +146,13 @@ namespace Compiler
           break;
         case 22://<Sentencia> ::= while ( <Expresion> ) <Bloque> 
           node = new While(stack);
-          //node.Type = "While";
           break;
         case 23://<Sentencia> ::= return <Expresion> ;
-          stack.Pop();
-          stack.Pop();
-          stack.Pop();
-          node = stack.Pop();
-          stack.Pop();
-          stack.Pop();
-          //node.Type = "Return";
+          node = new Return(stack);
           break;
         case 24://<Sentencia> ::= <LlamadaFunc> ; 
           stack.Pop();
-          stack.Pop();//quita ;
+          stack.Pop(); //quita ;
           stack.Pop();
           node = stack.Pop();//quita llamadafunc
           break;
@@ -188,7 +166,7 @@ namespace Compiler
           stack.Pop();
           aux = stack.Pop();//quita la lsta de argumentos
           stack.Pop();
-          node = (stack.Pop());//quita expresion
+          node = stack.Pop();//quita expresion
           stack.Pop();
           stack.Pop();//quita la ,
           node.Next = aux;
@@ -196,7 +174,6 @@ namespace Compiler
         case 33://Expresion->id
           stack.Pop();
           node = new Id(stack.Pop().token);
-          //node.Type = "Id";
           break;
         case 34:
           stack.Pop();
@@ -218,17 +195,10 @@ namespace Compiler
       return node;
     }
 
-    private int ACTION_GOTO(int state, int token)
-    {
-      if(int.TryParse(actionTable[state][token + 1], out int action))
-        return action;
-      return 0;
-    }
-
     /**************************** Auxiliar functions *******************************/
-    private void PRINT_STACK()
+    private void PrintStack()
     {
-      string input = GET_INPUT();
+      string input = GetInput();
       string queue = "";
 
       foreach(Node n in stack) {
@@ -239,11 +209,11 @@ namespace Compiler
         else
           queue = $"{n.State}, {queue}";
       }
-      table_Stack.Rows.Add(table_Stack.Rows.Count + 1, queue, input, ruleDetail);
+      TableStack.Rows.Add(TableStack.Rows.Count + 1, queue, input, ruleDetail);
       ruleDetail = "";
     }
 
-    private string GET_INPUT()
+    private string GetInput()
     {
       string input = "";
       foreach(Token t in tokens) {
@@ -267,15 +237,16 @@ namespace Compiler
       if(File.Exists(rulesFile)) {
         string[] lines = File.ReadAllLines(rulesFile);
 
+        int id = 0;
         foreach(string line in lines) {
           string[] rule = line.Split(null);
           string detail = "";
           for(int i = 2; i < rule.Length; i++) {
             detail += rule[i] + ' ';
           }
-          _ = int.TryParse(rule[0], out int id);
+          _ = int.TryParse(rule[0], out int column);
           _ = int.TryParse(rule[1], out int popNum);
-          grammarRules.Add(new Rule(id, popNum, detail, rule[2]));
+          grammarRules.Add(new Rule(id++, column, popNum, detail, rule[2]));
         }
       }
     }

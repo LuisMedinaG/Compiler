@@ -1,46 +1,47 @@
 ﻿using System.Collections.Generic;
 
-/* 
-  tipo de dato 0
-  id 1
-  ; 2
-  , 3
-  ( 4
-  ) 5
-  { 6
-  } 7
-  = 8
-  if 9
-  while 10
-  return 11
-  else 12
-  constante 13
-  opSuma 14
-  opLogico 15
-  opMultiplicacion 16
-  opRelacional 17
-  $ 18
-*/
+
 namespace Compiler
 {
+  /* 
+    tipo de dato 0
+    id 1
+    ; 2
+    , 3
+    ( 4
+    ) 5
+    { 6
+    } 7
+    = 8
+    if 9
+    while 10
+    return 11
+    else 12
+    constante 13
+    opSuma 14
+    opLogico 15
+    opMultiplicacion 16
+    opRelacional 17
+    $ 18
+  */
+  
   class Lexic
   {
     private int pos;
     private string input;
+    private int[][] Table;
 
     internal Queue<Token> Tokens { get; set; }
 
-    private int[][] Table;
-
     public Lexic(string input)
     {
+      Table = new int[100][];
       this.input = input;
       Tokens = new Queue<Token>();
     }
 
     internal bool Initialize_lexical_analysis()
     {
-
       while(pos < input.Length) {
         int state = 0;
         Token token = new Token();
@@ -51,7 +52,7 @@ namespace Compiler
           token.Value += input[pos];
         }
       }
-      return false;
+      return true;
     }
 
     internal int next_character()
@@ -91,7 +92,7 @@ namespace Compiler
             } else if(isSpace(c)) {
               pos++;
             } else if(isChar(c)) {
-              state = whatChar(c);
+              state = WhatChar(c);
             } else if(isNum(c)) {
               state = 13;
             } else if(esOpeSum(c)) {
@@ -178,7 +179,7 @@ namespace Compiler
       return edo;
     }
 
-    private static int whatChar(char c)
+    private static int WhatChar(char c)
     {
       switch(c) {
         case ';': return 2;

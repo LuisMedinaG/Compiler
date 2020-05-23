@@ -23,19 +23,45 @@ namespace Compiler
       this.State = State;
     }
 
-    internal Node(Token Token)
+    internal Node(Token token)
     {
-      this.token = Token;
+      this.token = token;
       Next = null;
       State = -1;
+    }
+
+    internal Node(Rule rule)
+    {
+      token = null;
+      Next = null;
+      State = -1;
+      Type = rule.Type;
     }
   }
 
   /*************************************/
+  class Rule : Node
+  {
+    public int Id { get; set; }
+    public int Column { get; set; }
+    public int PopNum { get; set; }
+    public string Detail { get; set; }
+
+    public Rule(int Id, int Column, int PopNum, string Detail, string Type)
+    {
+      this.Id = Id;
+      this.Column = Column;
+      this.PopNum = PopNum;
+      this.Detail = Detail;
+      this.Type = Type;
+    }
+  }
+
   internal class Id : Node
   {
     internal Id(Token token)
     {
+      Type = "Id";
       this.token = token;
     }
   }
@@ -64,6 +90,7 @@ namespace Compiler
       id = new Id(pila.Pop().token); //quita Id
       pila.Pop(); //quita estado
       tipo = new Tipo(pila.Pop().token); //quita tipo
+      Next = lvar;
     }
   }
 
@@ -88,6 +115,7 @@ namespace Compiler
       id = new Id(pila.Pop().token); // quita id
       pila.Pop(); // quita estado
       tipo = new Tipo(pila.Pop().token);//quita el tipo
+      Next = bloqFunc;
     }
   }
 
@@ -105,6 +133,7 @@ namespace Compiler
       id = new Id(pila.Pop().token);//quita el id
       pila.Pop(); // quita estado
       tipo = new Tipo(pila.Pop().token);//quita el tipo
+      Next = lparametros;
     }
   }
 
@@ -124,6 +153,7 @@ namespace Compiler
       pila.Pop();//quita =
       pila.Pop();
       id = new Id(pila.Pop().token);//quita id
+      Next = expresion;
     }
   }
 
@@ -134,75 +164,38 @@ namespace Compiler
 
     internal While(Stack<Node> pila)
     {
-      Type = "While";
       pila.Pop();
-      bloque = (pila.Pop());//quita bloque
+      bloque = pila.Pop();//quita bloque
       pila.Pop();
       pila.Pop(); //quita )
       pila.Pop();
-      expresion = (pila.Pop());//quita expresion
+      expresion = pila.Pop();//quita expresion
+      expresion.Next = bloque;
       pila.Pop();
       pila.Pop(); //quita (
       pila.Pop();
       pila.Pop(); //quita while
+      Type = "While";
     }
   }
 
-  // <Sentencia> ::= do <Bloque> while ( <Expresion> ) ;
-  internal class Dowhile : Node
+  internal class Return : Node
   {
-    Node bloque;
     Node expresion;
 
-    internal Dowhile(Stack<Node> pila)
+    public Return(Stack<Node> stack)
     {
-      Type = "DoWhile";
-      pila.Pop();
-      pila.Pop();//quita ;
-      pila.Pop();
-      pila.Pop();//quita )
-      pila.Pop();
-      expresion = (pila.Pop());//quita exprecion
-      pila.Pop();
-      pila.Pop();//quita (
-      pila.Pop();
-      pila.Pop();//quita el while
-      pila.Pop();
-      bloque = (pila.Pop());//quita bloque
-      pila.Pop();
-      pila.Pop();//quita do
+      Type = "Return";
+      stack.Pop();
+      stack.Pop();
+      stack.Pop();
+      expresion = stack.Pop();
+      stack.Pop();
+      stack.Pop();
+      Next = expresion;
     }
   }
 
-  internal class For : Node //<Sentencia> ::= for id = <Expresion> : <Expresion> : <Expresion> <SentenciaBloque>
-  {
-    Node senbloque;
-    Node expresion1;
-    Node expresion2;
-    Node expresion3;
-    Node id;
-
-    internal For(Stack<Node> pila)
-    {
-      Type = "For";
-      pila.Pop();
-      senbloque = (pila.Pop());//quita senteciabloque
-      pila.Pop();
-      expresion3 = (pila.Pop());//quita expresion
-      pila.Pop();
-      pila.Pop();//quita ;
-      pila.Pop();
-      expresion2 = (pila.Pop());//quita expresion
-      pila.Pop();
-      expresion1 = (pila.Pop());//quita expresion
-      pila.Pop();
-      pila.Pop();//quita =
-      pila.Pop();
-      id = new Id((pila.Pop()).token);//quita id
-      pila.Pop();
-      pila.Pop();//quita for
-    }
-  }
 
   internal class Constante : Node
   {
@@ -233,6 +226,7 @@ namespace Compiler
       pila.Pop(); // (
       pila.Pop();
       pila.Pop(); // if
+      Next = sentenciaBloque;
     }
   }
 
@@ -251,6 +245,7 @@ namespace Compiler
       pila.Pop();//quita (
       pila.Pop();
       id = new Id((pila.Pop()).token);//quita id
+      Next = argumentos;
     }
   }
 
@@ -268,6 +263,24 @@ namespace Compiler
       ope = stack.Pop();
       stack.Pop();
       exp2 = stack.Pop();
+    }
+  }
+
+  internal class ListVar : Node
+  {
+    Node id;
+    Node listVar;
+
+    public ListVar(Stack<Node> stack)//<ListaVar> ::= , id <ListaVar>
+    {
+      stack.Pop();
+      listVar = stack.Pop();
+      stack.Pop();
+      id = new Id(stack.Pop().token);
+      id.Next = listVar;
+      stack.Pop();
+      stack.Pop();
+      Next = listVar;
     }
   }
   /*************************************/

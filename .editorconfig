@@ -2,3 +2,6 @@
 
 # CA1304: Specify CultureInfo
 dotnet_diagnostic.CA1304.severity = none
+
+# CA1822: Member QuePalabraReservadaEs does not access instance data and can be marked as static (Shared in VisualBasic)
+dotnet_diagnostic.CA1822.severity = none

@@ -30,7 +30,7 @@ namespace Compiler
       bttn_AnalyzeSintax.Enabled = false;
 
       syntactic = new Parser(lexic.Tokens);
-      syntactic.table_Stack = table_Stack;
+      syntactic.TableStack = table_Stack;
 
       if(syntactic.Parse()) {
         MessageBox.Show("¡Sintaxis correcta!", "Resultado");
@@ -38,5 +38,5 @@ namespace Compiler
         MessageBox.Show("Sintaxis Incorrecta.", "Resultado");
       }
     }
-  }
+  } 
 }
