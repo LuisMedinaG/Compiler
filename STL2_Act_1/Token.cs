@@ -2,19 +2,20 @@
 {
   class Token
   {
-    public string Value { get; set; }
-    public int Type { get; set; }
+    public string value { get; set; }
+    public int type { get; set; }
 
-    public Token()
-    {
-      Value = "";
-      Type = 0;
-    }
+    public Token() { }
 
     public Token(string Value, int Type)
     {
-      this.Value = Value;
-      this.Type = Type;
+      this.value = Value;
+      this.type = Type;
+    }
+
+    public override string ToString()
+    {
+      return "Token(" + type + ", " + value + ")";
     }
   }
 }

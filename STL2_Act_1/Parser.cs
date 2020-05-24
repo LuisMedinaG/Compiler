@@ -7,11 +7,12 @@ namespace Compiler
 {
   class Parser
   {
-    readonly Queue<Token> tokens;
-    readonly Stack<Node> stack;
+    public Lexic lexer;
+    public Token token;
+    public Stack<Node> stack;
 
-    readonly List<string[]> actionTable;
     readonly List<Rule> grammarRules;
+    readonly List<string[]> actionTable;
 
     const string tableFile = "GR2slrTableBien.txt";
     const string rulesFile = "GR2slrRulesId.txt";
@@ -19,13 +20,13 @@ namespace Compiler
     internal DataGridView TableStack;
     string ruleDetail;
 
-    public Parser(Queue<Token> tokens)
+    public Parser(Lexic lexer)
     {
-      this.tokens = tokens;
-
-      stack = new Stack<Node>();
-      actionTable = new List<string[]>();
-      grammarRules = new List<Rule>();
+      this.lexer = lexer;
+      this.token = lexer.tokens.Dequeue();
+      this.stack = new Stack<Node>();
+      this.actionTable = new List<string[]>();
+      this.grammarRules = new List<Rule>();
 
       BuildActionTable();
       BuildGrammarRules();
@@ -39,22 +40,21 @@ namespace Compiler
       if(actionTable.Count == 0 || grammarRules.Count == 0) return false;
 
       stack.Push(new Node(0));
-      Token token = tokens.Dequeue();
       while(stack.Count > 0) {
-        int state = stack.Peek().State; // State on top of stack
-        int t = ACTION_GOTO(state, token.Type);
+        int state = stack.Peek().state; // State on top of stack
+        int t = ACTION_GOTO(state, token.type);
 
         if(t > 0) {
           /* SHIFT */
           stack.Push(new Node(token));
           stack.Push(new Node(t));
-          token = tokens.Dequeue();
+          token = lexer.tokens.Dequeue();
         } else if(t < -1) {
           /* REDUCE */
           Rule rule = grammarRules[Math.Abs(t) - 1];
           Node node = BuildTree(rule);
 
-          state = ACTION_GOTO(stack.Peek().State, rule.Column);
+          state = ACTION_GOTO(stack.Peek().state, rule.Column);
           
           stack.Push(node);
           stack.Push(new Node(state));
@@ -86,7 +86,7 @@ namespace Compiler
       switch(rule.Id) {
         case 0:  //<programa> ::= <Definiciones>
           stack.Pop();
-          node.Next = stack.Pop();
+          node.next = stack.Pop();
           break;
         case 1: // Definiciones -> ''
           break;
@@ -98,7 +98,7 @@ namespace Compiler
           aux = stack.Pop();
           stack.Pop();
           node = stack.Pop();
-          node.Next = aux;
+          node.next = aux;
           break;
         case 3://<Definicion> ::= <DefVar>
         case 4://<Definicion> ::= <DefFunc> 
@@ -169,15 +169,15 @@ namespace Compiler
           node = stack.Pop();//quita expresion
           stack.Pop();
           stack.Pop();//quita la ,
-          node.Next = aux;
+          node.next = aux;
           break;
         case 33://Expresion->id
           stack.Pop();
-          node = new Id(stack.Pop().token);
+          node = new Id(stack.Pop().symbol);
           break;
         case 34:
           stack.Pop();
-          node = new Constante(stack.Pop().token);
+          node = new Constante(stack.Pop().symbol);
           break;
         case 35:
           node = new Llamadafunc(stack);
@@ -202,12 +202,12 @@ namespace Compiler
       string queue = "";
 
       foreach(Node n in stack) {
-        if(n.Type != null)
-          queue = $"{n.Type}, {queue}";
-        else if(n.token != null)
-          queue = $"{n.token.Value}, {queue}";
+        if(n.type != null)
+          queue = $"{n.type}, {queue}";
+        else if(n.symbol != null)
+          queue = $"{n.symbol.value}, {queue}";
         else
-          queue = $"{n.State}, {queue}";
+          queue = $"{n.state}, {queue}";
       }
       TableStack.Rows.Add(TableStack.Rows.Count + 1, queue, input, ruleDetail);
       ruleDetail = "";
@@ -216,8 +216,8 @@ namespace Compiler
     private string GetInput()
     {
       string input = "";
-      foreach(Token t in tokens) {
-        input += t.Value + ' ';
+      foreach(Token t in lexer.tokens) {
+        input += t.value + ' ';
       }
       return input;
     }

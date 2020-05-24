@@ -5,8 +5,7 @@ namespace Compiler
 {
   public partial class MainForm : Form
   {
-    private Lexic lexic;
-    private Parser syntactic;
+    private Interpreter interpreter;
 
     public MainForm()
     {
@@ -15,28 +14,22 @@ namespace Compiler
 
     private void ButtonAnalyzeLexic_Click(object sender, EventArgs e)
     {
-      lexic = new Lexic(textBox_Input.Text);
-      lexic.Analyse();
+      interpreter = new Interpreter(input.Text);
 
-      table_Lexic.Rows.Clear();
-      foreach(Token t in lexic.Tokens) {
-        table_Lexic.Rows.Add(t.Value, t.Type);
-      }
-      bttn_AnalyzeSintax.Enabled = true;
-    }
+      //table_Lexic.Rows.Clear();
+      //foreach(Token t in lexic.tokens) {
+      //  table_Lexic.Rows.Add(t.Value, t.Type);
+      //}
 
-    private void ButtonAnalyzeSintax_Click(object sender, EventArgs e)
-    {
-      bttn_AnalyzeSintax.Enabled = false;
+      //parser =  {
+      //  TableStack = table_Stack
+      //};
 
-      syntactic = new Parser(lexic.Tokens);
-      syntactic.TableStack = table_Stack;
-
-      if(syntactic.Parse()) {
-        MessageBox.Show("¡Sintaxis correcta!", "Resultado");
-      } else {
-        MessageBox.Show("Sintaxis Incorrecta.", "Resultado");
-      }
+      //if(parser.Parse()) {
+      //  MessageBox.Show("¡Sintaxis correcta!", "Resultado");
+      //} else {
+      //  MessageBox.Show("Sintaxis Incorrecta.", "Resultado");
+      //}
     }
   } 
 }

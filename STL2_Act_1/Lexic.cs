@@ -28,36 +28,36 @@ namespace Compiler
   class Lexic
   {
     private int pos;
-    private string input;
-    private int[][] Table;
+    private string text;
+    //private int[][] Table;
 
-    internal Queue<Token> Tokens { get; set; }
+    internal Queue<Token> tokens { get; set; }
 
-    public Lexic(string input)
+    public Lexic(string _text)
     {
-      Table = new int[100][];
-      this.input = input;
-      Tokens = new Queue<Token>();
+      tokens = new Queue<Token>();
+      text = _text;
+      Analyse();
     }
 
-    internal bool Initialize_lexical_analysis()
-    {
-      while(pos < input.Length) {
-        int state = 0;
-        Token token = new Token();
+    //internal bool Initialize_lexical_analysis()
+    //{
+    //  while(pos < input.Length) {
+    //    int state = 0;
+    //    Token token = new Token();
 
-        while(state != 20) {
-          state = Table[state][next_character()];
+    //    while(state != 20) {
+    //      state = Table[state][next_character()];
 
-          token.Value += input[pos];
-        }
-      }
-      return true;
-    }
+    //      token.Value += input[pos];
+    //    }
+    //  }
+    //  return true;
+    //}
 
     internal int next_character()
     {
-      char c = input[pos++];
+      char c = text[pos++];
       if(isSpace(c)) return -1;
       if(isLetter(c)) return 1;
       switch(c) {
@@ -79,12 +79,12 @@ namespace Compiler
 
     public void Analyse()
     {
-      while(pos < input.Length) {
+      while(pos < text.Length) {
         int state = 0;
         Token t = new Token();
 
-        while(state != 20 && pos < input.Length) {
-          char c = input[pos];
+        while(state != 20 && pos < text.Length) {
+          char c = text[pos];
 
           if(state == 0) {
             if(isLetter(c)) {
@@ -106,58 +106,58 @@ namespace Compiler
             }
           } else if(state == 1) {
             if(isLetter(c) || isNum(c)) {
-              t.Value += input[pos++];
+              t.value += text[pos++];
             } else {
-              t.Type = QuePalabraReservadaEs(t.Value, state);
+              t.type = QuePalabraReservadaEs(t.value, state);
               state = 20;
             }
           } else if((state >= 2 && state <= 7) || (state >= 9 && state <= 12) ||
                       state == 14 || state == 16 || state == 18) {
-            t.Value += input[pos++];
-            t.Type = state;
+            t.value += text[pos++];
+            t.type = state;
             state = 20;
           } else if(state == 8) {
-            if(pos + 1 < input.Length && c == input[pos + 1]) {
-              t.Value += input[pos++];
-              t.Type = 17;
+            if(pos + 1 < text.Length && c == text[pos + 1]) {
+              t.value += text[pos++];
+              t.type = 17;
             } else {
-              t.Type = 8;
+              t.type = 8;
             }
-            t.Value += input[pos++];
+            t.value += text[pos++];
             state = 20;
           } else if(state == 13) {
             if(isNum(c)) {
-              t.Value += input[pos++];
+              t.value += text[pos++];
             } else {
-              t.Type = state;
+              t.type = state;
               state = 20;
             }
           } else if(state == 15) {
-            if(pos + 1 < input.Length && c == input[pos + 1]) {
-              t.Value += input[pos++];
-              t.Type = state;
+            if(pos + 1 < text.Length && c == text[pos + 1]) {
+              t.value += text[pos++];
+              t.type = state;
             } else {
-              t.Type = 20;
+              t.type = 20;
             }
-            t.Value += input[pos++];
+            t.value += text[pos++];
             state = 20;
           } else if(state == 17) {
-            if(input[pos + 1] == '=') {
-              t.Value += input[pos++];
+            if(text[pos + 1] == '=') {
+              t.value += text[pos++];
             }
-            t.Value += input[pos++];
-            t.Type = state;
+            t.value += text[pos++];
+            t.type = state;
             state = 20;
           }
         }
-        Tokens.Enqueue(t);
+        tokens.Enqueue(t);
       }
-      Tokens.Enqueue(new Token("$", 18));
+      tokens.Enqueue(new Token("$", 18));
     }
 
     public Token NextToken()
     {
-      return Tokens.Dequeue();
+      return tokens.Dequeue();
     }
 
     ///////////////////////////////////////////////////////////////////
