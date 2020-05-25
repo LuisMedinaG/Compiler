@@ -5,7 +5,10 @@ namespace Compiler
 {
   public partial class MainForm : Form
   {
-    private Interpreter interpreter;
+    Lexic lexer;
+    Parser parser;
+    Semantic semantic;
+    Node tree;
 
     public MainForm()
     {
@@ -14,22 +17,19 @@ namespace Compiler
 
     private void ButtonAnalyzeLexic_Click(object sender, EventArgs e)
     {
-      interpreter = new Interpreter(input.Text);
-
-      //table_Lexic.Rows.Clear();
-      //foreach(Token t in lexic.tokens) {
-      //  table_Lexic.Rows.Add(t.Value, t.Type);
-      //}
-
-      //parser =  {
-      //  TableStack = table_Stack
-      //};
-
-      //if(parser.Parse()) {
-      //  MessageBox.Show("¡Sintaxis correcta!", "Resultado");
-      //} else {
-      //  MessageBox.Show("Sintaxis Incorrecta.", "Resultado");
-      //}
+      lexer = new Lexic(input.Text);
+      printTokens();
+      parser = new Parser(lexer, table_Stack);
+      tree = parser.Parse();
+      semantic = new Semantic(tree);
     }
-  } 
+
+    private void printTokens()
+    {
+      table_Lexic.Rows.Clear();
+      foreach(Token t in lexer.tokens) {
+        table_Lexic.Rows.Add(t.value, t.type);
+      }
+    }
+  }
 }

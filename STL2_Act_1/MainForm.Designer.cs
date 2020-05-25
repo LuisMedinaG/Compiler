@@ -45,12 +45,12 @@
       ((System.ComponentModel.ISupportInitialize)(this.table_Stack)).BeginInit();
       this.SuspendLayout();
       // 
-      // textBox_Input
+      // input
       // 
       this.input.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.input.Location = new System.Drawing.Point(12, 67);
       this.input.Multiline = true;
-      this.input.Name = "textBox_Input";
+      this.input.Name = "input";
       this.input.Size = new System.Drawing.Size(225, 441);
       this.input.TabIndex = 7;
       // 
@@ -115,12 +115,13 @@
       // 
       // Paso
       // 
-      this.Paso.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.Paso.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
       this.Paso.HeaderText = "Paso";
       this.Paso.MaxInputLength = 5;
       this.Paso.Name = "Paso";
       this.Paso.ReadOnly = true;
       this.Paso.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+      this.Paso.Width = 56;
       // 
       // Pila
       // 
@@ -171,10 +172,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn word;
         private System.Windows.Forms.DataGridView table_Lexic;
         public System.Windows.Forms.DataGridView table_Stack;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Paso;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Pila;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cadenaentrada;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Regla;
-    }
+    private System.Windows.Forms.DataGridViewTextBoxColumn Paso;
+    private System.Windows.Forms.DataGridViewTextBoxColumn Pila;
+    private System.Windows.Forms.DataGridViewTextBoxColumn cadenaentrada;
+    private System.Windows.Forms.DataGridViewTextBoxColumn Regla;
+  }
 }
 

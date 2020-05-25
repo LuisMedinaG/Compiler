@@ -1,29 +1,38 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace Compiler
 {
   internal class Semantic
   {
-    private Parser parser;
-    private List<string> errores;
-    private List<SymbolTable> symbols;
-    //private ArrayList<VarDecl> declerations;
-    //private ArrayList<Identifier> identifiers;
-    //private ArrayList<Assign> assigns;
-    //private ArrayList<Exp> conditions;
+    private List<string> errors;
+    private List<TableSymbol> symbolTable; // TODO: Change structure to a STACK
+    // TODO: Implement a scope counter
 
-    public Semantic(Parser parser)
+    public Semantic(Node tree)
     {
-      this.parser = parser;
-      errores = new List<string>();
-      CheckIdentifiers();
+      errors = new List<string>();
+      symbolTable = new List<TableSymbol>();
+
+      if(tree == null) 
+        errors.Add("Error de sintaxis. Arbol nulo.");
+      else 
+        tree.validatipos(symbolTable, errors);
+
+      if(errors.Count > 0) 
+        printErrors();
+      else 
+        MessageBox.Show("Compilacion exitosa.", "Resultado");
     }
 
-    private void CheckIdentifiers()
+    private void printErrors()
     {
-      var root = parser.stack.First();
-      root.validatipos(symbols, errores);
+      string output = "";
+      for(int i = 0; i < errors.Count; i++) {
+        output += (i + 1) + ". " + errors[i] + Environment.NewLine;
+      }
+      MessageBox.Show(output, "Errores");
     }
   }
 }

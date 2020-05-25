@@ -9,10 +9,9 @@ namespace Compiler
     internal Node next { get; set; }
     internal int state { get; set; }
     internal string type { get; set; }
-
-    internal string ambito { get; set; }
-    internal char tipodato { get; set; }
-    internal string cadenapa { get; set; }
+    internal static string ambito { get; set; }
+    internal static char tipodato { get; set; }
+    internal static string cadenapa { get; set; }
 
     internal Node()
     {
@@ -36,46 +35,67 @@ namespace Compiler
       state = -1;
     }
 
-    public Node(string ambito)
+    public Node(string _ambito)
     {
-      this.ambito = ambito;
+      ambito = _ambito;
+      state = -1;
     }
 
-    public virtual void validatipos(List<SymbolTable> tabsim, List<string> errores)
-    {
-      if(next != null) next.validatipos(tabsim, errores);
-    }
-
+    /* SEMANTIC */
     public char dimetipo(Node tipo)
     {
-      if(tipo.symbol.value == "int") {
+      if(tipo.symbol.value == "int")
         return 'i';
-      } else if(tipo.symbol.value == "float") {
+      else if(tipo.symbol.value == "float")
         return 'f';
-      } else if(tipo.symbol.value == "char") {
+      else if(tipo.symbol.value == "char")
         return 'c';
-      } else if(tipo.symbol.value == "void") {
-        return 'v';
-      } else
-        return 'v';
+      return 'v';
     }
 
-    internal bool existe(List<SymbolTable> tabsim, string value, char tipodato, string ambito)
+    public virtual void validatipos(List<TableSymbol> tabsim, List<string> errores)
     {
-      foreach(var item in tabsim) {
-        /*check if exists*/
+      if(next != null) next.validatipos(tabsim, errores);
+
+      if(symbol != null) {
+        if(Int32.TryParse(symbol.value, out int res) == true) {
+          tipodato = 'i';
+        } else if(float.TryParse(symbol.value, out float res1) == true) {
+          tipodato = 'f';
+        } else {
+          tipodato = existe(tabsim, symbol.value, ambito);
+        }
       }
-      return true;
     }
 
-    public override string ToString()
+    public char existe(List<TableSymbol> tabsim, string id, string ambito)
     {
-      return "Node(" + type + ", " + state + ")";
+      foreach(var s in tabsim)
+        if(s.id == id && s.ambito == ambito)
+          return s.tipo;
+      return '\0';
+    }
+
+    public char buscartipo(List<TableSymbol> tabsim, string id)
+    {
+      foreach(var sT in tabsim) {
+        if(sT.id == id)
+          return sT.tipo;
+      }
+      return '\0';
     }
   }
 
-  /*************************************/
-  class Rule : Node
+  internal class Programa : Node
+  {
+    public Programa(Stack<Node> stack)
+    {
+      stack.Pop();
+      next = stack.Pop();
+    }
+  }
+
+  internal class Rule : Node
   {
     public int Id { get; set; }
     public int Column { get; set; }
@@ -94,25 +114,30 @@ namespace Compiler
 
   internal class Id : Node
   {
-    internal Id(Token Token)
+    internal Id(Token symbol)
     {
       type = "Id";
-      this.symbol = Token;
+      this.symbol = symbol;
+    }
+    public override void validatipos(List<TableSymbol> tab, List<string> errores)
+    {
+      tab.Add(new TableSymbol(symbol.value, tipodato, ambito));
+      if(next != null) next.validatipos(tab, errores);
     }
   }
 
   internal class Tipo : Node
   {
-    internal Tipo(Token token)
+    internal Tipo(Token _symbol)
     {
-      this.symbol = token;
+      symbol = _symbol;
     }
   }
 
   internal class DefVar : Node
   {
-    Node tipo;
-    Node id;
+    Tipo tipo;
+    Id id;
     Node lvar;
 
     internal DefVar(Stack<Node> pila)//<DefVar> ::= tipo id <ListaVar> ; 
@@ -127,12 +152,27 @@ namespace Compiler
       tipo = new Tipo(pila.Pop().symbol); //quita tipo
       next = lvar;
     }
+
+    public override void validatipos(List<TableSymbol> tab, List<string> errores)
+    {
+      tipodato = dimetipo(tipo);
+
+      if(existe(tab, id.symbol.value, ambito) != '\0')
+        errores.Add("La variable " + id.symbol.value + " de la funcion " + ambito + " ya existe");
+      else
+        tab.Add(new TableSymbol(id.symbol.value, tipodato, ambito));
+
+      if(lvar != null)
+        lvar.validatipos(tab, errores);
+      if(next != null)
+        next.validatipos(tab, errores);
+    }
   }
 
   internal class DefFunc : Node
   {
-    Node tipo;
-    Node id;
+    Tipo tipo;
+    Id id;
     Node parametros;
     Node bloqFunc;
 
@@ -153,28 +193,30 @@ namespace Compiler
       next = bloqFunc;
     }
 
-    public override void validatipos(List<SymbolTable> tabsim, List<string> errores)
+    public override void validatipos(List<TableSymbol> symbolTable, List<string> errors)
     {
       tipodato = dimetipo(tipo);
       ambito = id.symbol.value;
-      if(parametros != null) parametros.validatipos(tabsim, errores);
-      if(!existe(tabsim, id.symbol.value, tipodato, ambito)) {
-        tabsim.Add(new SymbolTable(id.symbol.value, tipodato, ambito,
-        cadenapa));
-      } else {
-        errores.Add(" La funcion " + id.symbol.value + " ya existe");
-      }
-      cadenapa = " ";
-      if(bloqFunc != null) bloqFunc.validatipos(tabsim, errores);
-      ambito = " ";
-      if(next != null) next.validatipos(tabsim, errores);
+
+      if(parametros != null)
+        parametros.validatipos(symbolTable, errors);
+
+      if(existe(symbolTable, id.symbol.value, ambito) != '\0')
+        errors.Add(" La funcion " + id.symbol.value + " ya existe.");
+      else
+        symbolTable.Add(new TableSymbol(id.symbol.value, tipodato, ambito, cadenapa));
+
+      cadenapa = "";
+      if(bloqFunc != null) bloqFunc.validatipos(symbolTable, errors);
+      ambito = "";
+      if(next != null) next.validatipos(symbolTable, errors);
     }
   }
 
   internal class Parametros : Node //<Parametros> ::= tipo id <ListaParam> 
   {
-    Node tipo;
-    Node id;
+    Tipo tipo;
+    Id id;
 
     internal Node lparametros;
     internal Parametros(Stack<Node> pila)
@@ -188,13 +230,13 @@ namespace Compiler
       next = lparametros;
     }
 
-    public override void validatipos(List<SymbolTable> tabsim, List<string> errores)
+    public override void validatipos(List<TableSymbol> tabsim, List<string> errores)
     {
       tipodato = dimetipo(tipo);
-      if(!existe(tabsim, id.symbol.value, tipodato, ambito)) {
-        tabsim.Add(new SymbolTable(id.symbol.value, tipodato, ambito));
-      } else
+      if(existe(tabsim, id.symbol.value, ambito) != '\0')
         errores.Add("la variable " + id.symbol.value + " ya fue declarada");
+      else
+        tabsim.Add(new TableSymbol(id.symbol.value, tipodato, ambito));
       cadenapa += tipo.symbol.value[0];
       if(lparametros != null) lparametros.validatipos(tabsim, errores);
       if(next != null) next.validatipos(tabsim, errores);
@@ -203,7 +245,7 @@ namespace Compiler
 
   internal class Asignacion : Node//<Sentencia> ::= id = <Expresion> ; 
   {
-    Node id;
+    Id id;
     Node expresion;
 
     internal Asignacion(Stack<Node> pila)//<Sentencia> ::= id = <Expresion> ;
@@ -220,50 +262,14 @@ namespace Compiler
       next = expresion;
     }
 
-    public override void validatipos(List<SymbolTable> tabsim, List<string> errores)
+    public override void validatipos(List<TableSymbol> tabsim, List<string> errores)
     {
-      id.validatipos(tabsim, errores);
-      expresion.validatipos(tabsim, errores);
-      if(id.tipodato == 'c' && expresion.tipodato == 'c') {
-        tipodato = 'c';
-
-      } else {
-        if(id.tipodato == 'i' && expresion.tipodato == 'i') {
-          tipodato = 'i';
-        } else {
-          if(id.tipodato == 'f' && expresion.tipodato == 'f') {
-            tipodato = 'f';
-          } else {
-            tipodato = 'e';
-            errores.Add(" el tipo de dato de " + id.symbol.value + " es diferente al de la expresion");
-            }
-        }
-      }
-      if(expresion.next != null) expresion.next.validatipos(tabsim,
-     errores);
+      tipodato = existe(tabsim, id.symbol.value, ambito);
+      char tipo1 = tipodato;
+      if(expresion != null) expresion.validatipos(tabsim, errores);
+      char tipo2 = tipodato;
+      if(tipo1 != tipo2) errores.Add("El tipo de dato de " + id.symbol.value + " en la funcion " + ambito + " es diferente de la expresion");
       if(next != null) next.validatipos(tabsim, errores);
-    }
-  }
-
-  internal class While : Node //<Sentencia> ::= while ( <Expresion> ) <Bloque> 
-  {
-    Node expresion;
-    Node bloque;
-
-    internal While(Stack<Node> pila)
-    {
-      pila.Pop();
-      bloque = pila.Pop();//quita bloque
-      pila.Pop();
-      pila.Pop(); //quita )
-      pila.Pop();
-      expresion = pila.Pop();//quita expresion
-      expresion.next = bloque;
-      pila.Pop();
-      pila.Pop(); //quita (
-      pila.Pop();
-      pila.Pop(); //quita while
-      type = "While";
     }
   }
 
@@ -282,14 +288,131 @@ namespace Compiler
       stack.Pop();
       next = expresion;
     }
+
+    public override void validatipos(List<TableSymbol> tabsim, List<string> errores)
+    {
+      if(expresion.symbol != null) {
+        if(Int32.TryParse(expresion.symbol.value, out int res) == true) {
+          tipodato = 'i';
+        } else if(float.TryParse(expresion.symbol.value, out float res1) == true) {
+          tipodato = 'f';
+        } else {
+          tipodato = existe(tabsim, expresion.symbol.value, ambito);
+        }
+      }
+      char tmpTipoDato = buscartipo(tabsim, ambito);
+      if(tipodato != tmpTipoDato)
+        errores.Add("El tipo de dato que regresa " + expresion.symbol.value + " no es el mismo que el de la funcion " + ambito);
+    }
   }
 
-
-  internal class Constante : Node
+  internal class Llamadafunc : Node//<LlamadaFunc> ::= id ( <Argumentos> )
   {
-    internal Constante(Token _token)
+    Id id;
+    Node argumentos;
+
+    internal Llamadafunc(Stack<Node> pila)
     {
-      symbol = _token;
+      pila.Pop();
+      pila.Pop();//quita )
+      pila.Pop();
+      argumentos = (pila.Pop());//quita expresion
+      pila.Pop();
+      pila.Pop();//quita (
+      pila.Pop();
+      id = new Id((pila.Pop()).symbol);//quita id
+      next = argumentos;
+    }
+
+    public override void validatipos(List<TableSymbol> tabsim, List<string> errores)
+    {
+      Node aux = new Node();
+      tipodato = buscartipo(tabsim, id.symbol.value);
+      aux = argumentos;
+      string cadena = "";
+      if(aux.symbol != null) {
+        while(aux != null && aux.symbol != null) {
+          if(Int32.TryParse(aux.symbol.value, out int res) == true) {
+            cadena += 'i';
+          } else if(float.TryParse(aux.symbol.value, out float res1) == true) {
+            cadena += 'f';
+          } else {
+            cadena += existe(tabsim, aux.symbol.value, ambito);
+          }
+          aux = aux.next;
+        }
+      }
+      if(argumentos != null) argumentos.validatipos(tabsim, errores);
+
+      if(id.symbol.value == "print")
+        id.validatipos(tabsim, errores);
+      else if(existefunc(tabsim, id.symbol.value, ambito, cadena, errores)) {
+        id.validatipos(tabsim, errores);
+      }
+      if(next != null)
+        next.validatipos(tabsim, errores);
+    }
+
+    public bool existefunc(List<TableSymbol> tabsim, string _id, string ambito, string _cadenapa, List<string> errores)
+    {
+      bool existe = false;
+      foreach(var s in tabsim) {
+        if(s.id == _id) {
+          existe = true;
+          if(s.stpara == _cadenapa)
+            return true;
+          else
+            errores.Add("los parametros de la funcion " + _id + " son incorrectos");
+        }
+      }
+      if(!existe) errores.Add("la funcion " + _id + " no existe");
+      return false;
+    }
+  }
+
+  internal class Expresion : Node //Expresion -> Expresion opSuma Expresion
+  {
+    Node left;
+    Node right;
+
+    internal Expresion(Stack<Node> stack)
+    {
+      stack.Pop();
+      left = (Node)stack.Pop();
+      stack.Pop();
+      symbol = stack.Pop().symbol;
+      stack.Pop();
+      right = (Node)stack.Pop();
+    }
+
+    public override void validatipos(List<TableSymbol> tabsim, List<string> errores)
+    {
+      char tipodato1 = tipodato;
+      left.validatipos(tabsim, errores);
+      char tipodato2 = tipodato;
+      right.validatipos(tabsim, errores);
+      char tipodato3 = tipodato;
+      if(tipodato1 == tipodato2 && tipodato2 == tipodato3) {
+        if(next != null) next.validatipos(tabsim, errores);
+      }
+    }
+  }
+
+  internal class ListVar : Node
+  {
+    Id id;
+    Node listVar;
+
+    public ListVar(Stack<Node> stack)//<ListaVar> ::= , id <ListaVar>
+    {
+      stack.Pop();
+      listVar = stack.Pop();
+      stack.Pop();
+      id = new Id(stack.Pop().symbol);
+      id.next = listVar;
+      stack.Pop();
+      stack.Pop();
+      next = listVar;
     }
   }
 
@@ -316,107 +439,68 @@ namespace Compiler
       pila.Pop(); // if
       next = sentenciaBloque;
     }
+
+    public override void validatipos(List<TableSymbol> tasimb, List<string> errores)
+    {
+      if(sentenciaBloque != null) sentenciaBloque.validatipos(tasimb, errores);
+      if(otro != null) otro.validatipos(tasimb, errores);
+      if(next != null) next.validatipos(tasimb, errores);
+    }
   }
 
-  internal class Llamadafunc : Node//<LlamadaFunc> ::= id ( <Argumentos> )
+  internal class While : Node //<Sentencia> ::= while ( <Expresion> ) <Bloque> 
   {
-    Node id;
-    Node argumentos;
+    Node expresion;
+    Node bloque;
 
-    internal Llamadafunc(Stack<Node> pila)
+    internal While(Stack<Node> pila)
     {
       pila.Pop();
-      pila.Pop();//quita )
+      bloque = pila.Pop();//quita bloque
       pila.Pop();
-      argumentos = (pila.Pop());//quita expresion
+      pila.Pop(); //quita )
       pila.Pop();
-      pila.Pop();//quita (
+      expresion = pila.Pop();//quita expresion
+      expresion.next = bloque;
       pila.Pop();
-      id = new Id((pila.Pop()).symbol);//quita id
-      next = argumentos;
+      pila.Pop(); //quita (
+      pila.Pop();
+      pila.Pop(); //quita while
+      type = "While";
     }
 
-    public override void validatipos(List<SymbolTable> tabsim, List<string> errores)
+    public override void validatipos(List<TableSymbol> tabsim, List<string> errores)
     {
-      Node aux = new Node(ambito);
-      //tipodato = buscartipo(tabsim, id.symbol.value);
-      aux = argumentos;
-      //string cadena = "";
-      while(aux != null) {
-        char tipo2;
-        //tipo2 = buscartipo2(tabsim, aux.symbol.value, ambito);
-
-        //cadena += tipo2;
-        //aux = aux.next;
-      }
-
-      if(argumentos != null) argumentos.validatipos(tabsim, errores);
-      if(id.symbol.value == "print")
-        id.validatipos(tabsim, errores);
-      else {
-        Console.WriteLine("entra a ver si existe la funcion");
-        //if(existefunc(tabsim, id.simbolo, ambito, cadena, errores)) {
-        //  id.validatipos(tabsim, cadenapa, errores);
-        //}
-      }
+      if(bloque != null) bloque.validatipos(tabsim, errores);
       if(next != null) next.validatipos(tabsim, errores);
     }
-
-    public bool existefunc(List<SymbolTable> tabsim, string id, string ambito, string cadenapa, List<string> errores)
-    {
-      bool existe = false;
-      foreach(var s in tabsim) {
-        if(s.id == id) {
-          existe = true;
-
-          Console.WriteLine("en la funcion " + id);
-          Console.WriteLine("stpara=" + s.stpara + " === cadenapa=" +
-          cadenapa);
-          if(s.stpara == cadenapa)
-            return true;
-          else {
-            errores.Add("los parametros de la funcion " + id + " son incorrectos");
-          }
-        }
-      }
-      if(!existe) errores.Add("la funcion " + id + " no existe");
-      return false;
-    }
-}
-
-  internal class Expresion : Node //Expresion -> Expresion opSuma Expresion
-  {
-    Node exp1;
-    Node ope;
-    Node exp2;
-
-    internal Expresion(Stack<Node> stack)
-    {
-      stack.Pop();
-      exp1 = stack.Pop();
-      stack.Pop();
-      ope = stack.Pop();
-      stack.Pop();
-      exp2 = stack.Pop();
-    }
   }
 
-  internal class ListVar : Node
+  internal class TableSymbol : Node
   {
-    Node id;
-    Node listVar;
+    public string id;
+    public char tipo;
+    public string stpara;
+    public string ambito;
 
-    public ListVar(Stack<Node> stack)//<ListaVar> ::= , id <ListaVar>
+    public TableSymbol(string _id, char _tipo, string _ambito, string _stpara)
     {
-      stack.Pop();
-      listVar = stack.Pop();
-      stack.Pop();
-      id = new Id(stack.Pop().symbol);
-      id.next = listVar;
-      stack.Pop();
-      stack.Pop();
-      next = listVar;
+      id = _id;
+      tipo = _tipo;
+      ambito = _ambito;
+      stpara = _stpara;
+    }
+    public TableSymbol(string _id, char _tipo, string _ambito)
+    {
+      id = _id;
+      tipo = _tipo;
+      ambito = _ambito;
+      stpara = "";
+    }
+
+    public TableSymbol(string ambito)
+    {
+      this.ambito = ambito;
     }
   }
-  /*************************************/
 }

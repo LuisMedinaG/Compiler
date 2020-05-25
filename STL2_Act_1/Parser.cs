@@ -11,38 +11,43 @@ namespace Compiler
     public Token token;
     public Stack<Node> stack;
 
+    private List<string> errors;
+    private List<TableSymbol> SymbolTable;
+
+
     readonly List<Rule> grammarRules;
     readonly List<string[]> actionTable;
 
     const string tableFile = "GR2slrTableBien.txt";
     const string rulesFile = "GR2slrRulesId.txt";
 
-    internal DataGridView TableStack;
-    string ruleDetail;
+    internal DataGridView tableStack;
+    string ruleStr;
 
-    public Parser(Lexic lexer)
+    public Parser(Lexic _lexer, DataGridView _tableStack)
     {
-      this.lexer = lexer;
-      this.token = lexer.tokens.Dequeue();
-      this.stack = new Stack<Node>();
-      this.actionTable = new List<string[]>();
-      this.grammarRules = new List<Rule>();
+      lexer = _lexer;
+      token = _lexer.tokens.Dequeue();
+      tableStack = _tableStack;
+      stack = new Stack<Node>();
+      actionTable = new List<string[]>();
+      grammarRules = new List<Rule>();
 
       BuildActionTable();
       BuildGrammarRules();
     }
 
-    public bool Parse()
+    public Node Parse()
     {
-      TableStack.Rows.Clear();
+      tableStack.Rows.Clear();
       PrintStack();
 
-      if(actionTable.Count == 0 || grammarRules.Count == 0) return false;
+      if(actionTable.Count == 0 || grammarRules.Count == 0) return null;
 
       stack.Push(new Node(0));
       while(stack.Count > 0) {
         int state = stack.Peek().state; // State on top of stack
-        int t = ACTION_GOTO(state, token.type);
+        int t = ACTION_GOTO(state, token.type); // Check grammar table
 
         if(t > 0) {
           /* SHIFT */
@@ -52,23 +57,24 @@ namespace Compiler
         } else if(t < -1) {
           /* REDUCE */
           Rule rule = grammarRules[Math.Abs(t) - 1];
-          Node node = BuildTree(rule);
+          Node node = ReduceStack(rule);
 
           state = ACTION_GOTO(stack.Peek().state, rule.Column);
           
           stack.Push(node);
           stack.Push(new Node(state));
-          ruleDetail = rule.Detail;
+          ruleStr = rule.Detail; // For printing
         } else if(t == -1) {
           /* ACCEPT */
-          return true;
+          stack.Pop();
+          return stack.Pop(); // Return the root of tree
         } else {
           /* ERROR */
-          return false;
+          return null;
         }
         PrintStack();
       }
-      return false;
+      return null;
     }
 
     private int ACTION_GOTO(int state, int token)
@@ -78,17 +84,14 @@ namespace Compiler
       return 0;
     }
 
-    private Node BuildTree(Rule rule)
+    private Node ReduceStack(Rule rule)
     {
       Node node = new Node(rule);
       Node aux;
 
       switch(rule.Id) {
         case 0:  //<programa> ::= <Definiciones>
-          stack.Pop();
-          node.next = stack.Pop();
-          break;
-        case 1: // Definiciones -> ''
+          node = new Programa(stack);
           break;
         case 2://<Definiciones> ::= <Definicion> <Definiciones> 
         case 15://<DefLocales> ::= <DefLocal> <DefLocales> 
@@ -103,22 +106,30 @@ namespace Compiler
         case 3://<Definicion> ::= <DefVar>
         case 4://<Definicion> ::= <DefFunc> 
         case 16://<DefLocal> ::= <DefVar> 
-        case 17://<DefLocal> ::= <Sentencia> 
+        case 17://<DefLocal> ::= <Sentencia>
+        case 33://<Expresion> ::= <Id>
+        case 34://<Expresion> ::= <Constante>
         case 32://<Expresion> ::= <LlamadaFunc> 
         case 36://<SentenciaBloque> ::= <Sentencia> 
         case 37://<SentenciaBloque> ::= <Bloque> 
           stack.Pop();
           node = stack.Pop();
-          //node.Next;
           break;
         case 5:// <DefVar> ::= tipo id <ListaVar> ;
           node = new DefVar(stack);
           break;
         case 7://<ListaVar> ::= , id <ListaVar>
-          node = new ListVar(stack);
+          stack.Pop(); //Quita estado
+          Node lvar = stack.Pop(); //Quita ListaVar
+          stack.Pop(); //Quita estado
+          node = new Id(stack.Pop().symbol); //Quita Id
+          node.next = lvar;
+          stack.Pop(); //Quita estado;
+          stack.Pop();//Quita ,
           break;
         case 8://<DefFunc> ::= tipo id ( <Parametros> ) <BloqFunc>
           node = new DefFunc(stack);
+          //node.validatipos(SymbolTable, errors);
           break;
         case 10://<Parametros> ::= tipo id <ListaParam>
           node = new Parametros(stack);
@@ -171,14 +182,6 @@ namespace Compiler
           stack.Pop();//quita la ,
           node.next = aux;
           break;
-        case 33://Expresion->id
-          stack.Pop();
-          node = new Id(stack.Pop().symbol);
-          break;
-        case 34:
-          stack.Pop();
-          node = new Constante(stack.Pop().symbol);
-          break;
         case 35:
           node = new Llamadafunc(stack);
           break;
@@ -188,8 +191,8 @@ namespace Compiler
         case 42: // Expresion -> Expresion opRelac Expresion
           node = new Expresion(stack);
           break;
-        //aqui cae R1,R6,R9,R11,R14,R18,R25,R28,R30
-        default:
+        // Aqui cae R1,R6,R9,R11,R14,R18,R25,R28,R30
+        default: // Ningun pop
           break;
       }
       return node;
@@ -209,8 +212,8 @@ namespace Compiler
         else
           queue = $"{n.state}, {queue}";
       }
-      TableStack.Rows.Add(TableStack.Rows.Count + 1, queue, input, ruleDetail);
-      ruleDetail = "";
+      tableStack.Rows.Add(tableStack.Rows.Count + 1, queue, input, ruleStr);
+      ruleStr = "";
     }
 
     private string GetInput()

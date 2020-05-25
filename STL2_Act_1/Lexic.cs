@@ -24,11 +24,12 @@ namespace Compiler
     opRelacional 17
     $ 18
   */
-  
+
   class Lexic
   {
     private int pos;
     private string text;
+
     //private int[][] Table;
 
     internal Queue<Token> tokens { get; set; }
@@ -93,6 +94,9 @@ namespace Compiler
               pos++;
             } else if(isChar(c)) {
               state = WhatChar(c);
+            } else if(c == '.') {
+              state = 13;
+              t.value += '0';
             } else if(isNum(c)) {
               state = 13;
             } else if(esOpeSum(c)) {
@@ -126,7 +130,7 @@ namespace Compiler
             t.value += text[pos++];
             state = 20;
           } else if(state == 13) {
-            if(isNum(c)) {
+            if(isNum(c) || c == '.') {
               t.value += text[pos++];
             } else {
               t.type = state;
@@ -199,7 +203,7 @@ namespace Compiler
     private static bool isOpeRel(char c) => c == '<' || c == '>' || c == '!';
     private static bool isOpeMul(char c) => c == '*' || c == '/';
     private static bool esOpeSum(char c) => c == '+' || c == '-';
-    private static bool isChar(char c) => c == ';' || c == ',' || c == '=' || c == '(' ||
-              c == ')' || c == '{' || c == '}';
+    private static bool isChar(char c) => c == ';' || c == ',' || c == '=' || c == '(' || c == ')' ||
+                                          c == '{' || c == '}';
   }
 }
