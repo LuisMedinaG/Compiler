@@ -51,14 +51,15 @@
       this.input.Location = new System.Drawing.Point(12, 67);
       this.input.Multiline = true;
       this.input.Name = "input";
-      this.input.Size = new System.Drawing.Size(225, 441);
+      this.input.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.input.Size = new System.Drawing.Size(240, 457);
       this.input.TabIndex = 7;
       // 
       // bttnLexico
       // 
       this.bttnLexico.Location = new System.Drawing.Point(12, 12);
       this.bttnLexico.Name = "bttnLexico";
-      this.bttnLexico.Size = new System.Drawing.Size(225, 49);
+      this.bttnLexico.Size = new System.Drawing.Size(240, 49);
       this.bttnLexico.TabIndex = 14;
       this.bttnLexico.Text = "Compilar";
       this.bttnLexico.UseVisualStyleBackColor = true;
@@ -85,11 +86,11 @@
       this.table_Lexic.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.word,
             this.numWord});
-      this.table_Lexic.Location = new System.Drawing.Point(243, 12);
+      this.table_Lexic.Location = new System.Drawing.Point(258, 12);
       this.table_Lexic.Name = "table_Lexic";
       this.table_Lexic.ReadOnly = true;
       this.table_Lexic.RowHeadersVisible = false;
-      this.table_Lexic.Size = new System.Drawing.Size(207, 496);
+      this.table_Lexic.Size = new System.Drawing.Size(207, 512);
       this.table_Lexic.TabIndex = 6;
       // 
       // table_Stack
@@ -102,7 +103,7 @@
             this.Pila,
             this.cadenaentrada,
             this.Regla});
-      this.table_Stack.Location = new System.Drawing.Point(456, 12);
+      this.table_Stack.Location = new System.Drawing.Point(471, 12);
       this.table_Stack.Name = "table_Stack";
       this.table_Stack.ReadOnly = true;
       this.table_Stack.RowHeadersVisible = false;
@@ -110,7 +111,7 @@
       this.table_Stack.ShowCellToolTips = false;
       this.table_Stack.ShowEditingIcon = false;
       this.table_Stack.ShowRowErrors = false;
-      this.table_Stack.Size = new System.Drawing.Size(499, 496);
+      this.table_Stack.Size = new System.Drawing.Size(536, 512);
       this.table_Stack.TabIndex = 16;
       // 
       // Paso
@@ -148,7 +149,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(967, 520);
+      this.ClientSize = new System.Drawing.Size(1019, 536);
       this.Controls.Add(this.table_Stack);
       this.Controls.Add(this.bttnLexico);
       this.Controls.Add(this.input);

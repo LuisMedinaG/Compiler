@@ -8,7 +8,6 @@ namespace Compiler
   {
     private List<string> errors;
     private List<TableSymbol> symbolTable; // TODO: Change structure to a STACK
-    // TODO: Implement a scope counter
 
     public Semantic(Node tree)
     {
@@ -18,12 +17,12 @@ namespace Compiler
       if(tree == null) 
         errors.Add("Error de sintaxis. Arbol nulo.");
       else 
-        tree.validatipos(symbolTable, errors);
+        tree.TypeCheck(symbolTable, errors);
 
       if(errors.Count > 0) 
         printErrors();
       else 
-        MessageBox.Show("Compilacion exitosa.", "Resultado");
+        MessageBox.Show("ÉXITO.", "Resultado");
     }
 
     private void printErrors()
